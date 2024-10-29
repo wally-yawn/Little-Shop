@@ -1,4 +1,4 @@
-class Invoices < ApplicationRecord
-  belongs_to :merchants, :customers
+class Invoice < ApplicationRecord
+  belongs_to :merchant, :customer
   has_many :transactions, :invoice_items
 end

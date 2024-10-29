@@ -1,3 +1,3 @@
-class Invoice_items < ApplicationRecord
-  belongs_to :items, :invoices
+class Invoice_item < ApplicationRecord
+  belongs_to :item, :invoice
 end
