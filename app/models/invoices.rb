@@ -1,2 +1,0 @@
-class Invoices < ApplicationRecord
-end
