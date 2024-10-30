@@ -33,5 +33,19 @@ RSpec.describe "Merchants API" do
       merchants = JSON.parse(response.body)
       expect(merchants["data"].count).to eq(0)
     end
+
+    it "can sort merchants based on age" do
+      expect(true).to eq(false)
+    end
+
+    it "can sort merchants based on age when no merchants exist" do
+      Merchant.destroy_all
+
+      get "/api/v1/merchants?sorted=age"
+      expect(response).to be_successful
+      merchants = JSON.parse(response.body)
+      expect(merchants["data"].count).to eq(0)
+    end
+
   end
 end
