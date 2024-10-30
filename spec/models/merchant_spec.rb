@@ -13,7 +13,7 @@ RSpec.describe Merchant, type: :model do
       @merchant4 = Merchant.create(name: 'Jonathan')
 
       merchants = Merchant.sort
-      # binding.pry
+      
       expect(merchants[0].created_at).to be > (merchants[1].created_at)
       expect(merchants[1].created_at).to be > (merchants[2].created_at)
       expect(merchants[2].created_at).to be > (merchants[3].created_at)
