@@ -2,13 +2,13 @@ class Api::V1::MerchantsController < ApplicationController
 
   def index
     merchants = Merchant.sort(params)
-    render json: MerchantSerializer.format_merchants(merchants)
+    render json: MerchantSerializer.new(merchants)
   end
 
   def update
     merchant = Merchant.find(params[:id])
     merchant.update(merchant_params)
-    render json:MerchantSerializer.format_merchants([merchant])
+    render json:MerchantSerializer.new(merchant)
   end
 
   private
