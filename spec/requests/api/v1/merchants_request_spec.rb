@@ -40,8 +40,8 @@ RSpec.describe "Merchants API" do
       merchant = JSON.parse(response.body)
 
       expect(merchant["data"]).to have_key("id")
-      expect(merchant["data"]["id"])..to be_a(Integer)
-      expect(merchant["data"])..to have_key("type")
+      expect(merchant["data"]["id"]).to be_a(Integer)
+      expect(merchant["data"]).to have_key("type")
       expect(merchant["data"]["type"]).to eq("merchant")
       expect(merchant["data"]["attributes"]).to have_key("name")
       expect(merchant["data"]["attributes"]["name"]).to eq("Wally")
