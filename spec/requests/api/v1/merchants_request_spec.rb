@@ -33,5 +33,37 @@ RSpec.describe "Merchants API" do
       merchants = JSON.parse(response.body)
       expect(merchants["data"].count).to eq(0)
     end
+
+    it "can sort merchants based on age" do
+      get "/api/v1/merchants?sorted=age"
+      expect(response).to be_successful
+      merchants = JSON.parse(response.body)
+      
+      expect(merchants["data"].count).to eq(4)
+      expect(merchants["data"][0]["id"]).to be > (merchants["data"][1]["id"])
+      expect(merchants["data"][1]["id"]).to be > (merchants["data"][2]["id"])
+      expect(merchants["data"][2]["id"]).to be > (merchants["data"][3]["id"])
+    end
+
+    it "can sort merchants based on age when there is a gap in ids" do
+      @merchant3.destroy
+      get "/api/v1/merchants?sorted=age"
+      expect(response).to be_successful
+      merchants = JSON.parse(response.body)
+      
+      expect(merchants["data"].count).to eq(3)
+      expect(merchants["data"][0]["id"]).to be > (merchants["data"][1]["id"])
+      expect(merchants["data"][1]["id"]).to be > (merchants["data"][2]["id"])
+    end
+
+    it "can sort merchants based on age when no merchants exist" do
+      Merchant.destroy_all
+
+      get "/api/v1/merchants?sorted=age"
+      expect(response).to be_successful
+      merchants = JSON.parse(response.body)
+      expect(merchants["data"].count).to eq(0)
+    end
+
   end
 end
