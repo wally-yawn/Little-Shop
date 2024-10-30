@@ -35,6 +35,7 @@ RSpec.describe "Items API", type: :request do
       expect(items).to be_an(Array)
 
       item = items[0]
+      
       expect(item[:id]).to be_an(Integer)
       expect(item[:type]).to eq('item')
 
