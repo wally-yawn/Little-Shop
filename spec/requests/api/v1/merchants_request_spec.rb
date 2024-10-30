@@ -35,6 +35,7 @@ RSpec.describe "Merchants API" do
     end
 
     it "can sort merchants based on age" do
+      get "/api/v1/merchants?sorted=age"
       expect(response).to be_successful
       merchants = JSON.parse(response.body)
       
