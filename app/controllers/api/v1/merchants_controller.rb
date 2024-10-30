@@ -1,7 +1,8 @@
 class Api::V1::MerchantsController < ApplicationController
 
   def index
-    render json: MerchantSerializer.format_merchants(Merchant.all)
+    merchants = Merchant.sort(params)
+    render json: MerchantSerializer.format_merchants(merchants)
   end
 
   def show
