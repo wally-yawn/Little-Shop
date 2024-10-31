@@ -86,7 +86,7 @@ RSpec.describe "Merchants API" do
       get "/api/v1/merchants/#{missing_id}"
       # binding.pry
       expect(response).to_not be_successful
-      expect(response.status).to eq(404)
+      expect(response.status).to eq(422)
   
       data = JSON.parse(response.body, symbolize_names: true)
   

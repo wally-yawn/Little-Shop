@@ -22,7 +22,7 @@ class Api::V1::MerchantsController < ApplicationController
             message: error.message
           }
         ]
-      }, status: :not_found
+      }, status: 422
     end
   end
 
