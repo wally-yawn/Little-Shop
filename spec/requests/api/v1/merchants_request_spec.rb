@@ -27,7 +27,7 @@ RSpec.describe "Merchants API" do
 
     it "can fetch all merchants when there are no merchants" do
       Merchant.destroy_all
-
+      
       get "/api/v1/merchants"
       expect(response).to be_successful
       merchants = JSON.parse(response.body)
