@@ -17,7 +17,7 @@ RSpec.describe "Merchants API" do
 
       merchants["data"].each do |merchant|
         expect(merchant).to have_key("id")
-        expect(merchant["id"]).to be_a(Integer)
+        expect(merchant["id"]).to be_a(String)
         expect(merchant).to have_key("type")
         expect(merchant["type"]).to eq("merchant")
         expect(merchant["attributes"]).to have_key("name")
@@ -72,7 +72,7 @@ RSpec.describe "Merchants API" do
       merchant = JSON.parse(response.body)
 
       expect(merchant["data"]).to have_key("id")
-      expect(merchant["data"]["id"]).to be_a(Integer)
+      expect(merchant["data"]["id"]).to be_a(String)
       expect(merchant["data"]).to have_key("type")
       expect(merchant["data"]["type"]).to eq("merchant")
       expect(merchant["data"]["attributes"]).to have_key("name")
@@ -80,7 +80,19 @@ RSpec.describe "Merchants API" do
     end
 
     it "returns an error when the merchant_id does not exist" do
-      expect(true).to eq(false)
+      missing_id = @merchant2.id
+      @merchant2.destroy
+
+      get "/api/v1/merchants/#{missing_id}"
+      # binding.pry
+      expect(response).to_not be_successful
+      expect(response.status).to eq(404)
+  
+      data = JSON.parse(response.body, symbolize_names: true)
+  
+      expect(data[:errors]).to be_a(Array)
+      expect(data[:errors].first[:status]).to eq("422")
+      expect(data[:errors].first[:message]).to eq("Couldn't find Merchant with 'id'=#{missing_id}") 
     end
   end
 end

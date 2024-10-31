@@ -3,7 +3,7 @@ class MerchantSerializer
   def self.format_merchants(merchants)
     merchant_data = merchants.map do |merchant|
       {
-        id: merchant.id,
+        id: "#{merchant.id}",
         type: "merchant",
         attributes: {
           name: merchant.name
@@ -15,7 +15,7 @@ class MerchantSerializer
 
   def self.format_merchant(merchant)
     {data: {
-      id: merchant.id,
+      id: "#{merchant.id}",
       type: "merchant",
       attributes: {
         name: merchant.name
