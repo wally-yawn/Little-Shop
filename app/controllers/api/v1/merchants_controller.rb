@@ -11,15 +11,9 @@ class Api::V1::MerchantsController < ApplicationController
     render json:MerchantSerializer.new(merchant)
   end
 
-  private
-
-  def merchant_params
-    params.permit(:name)
-  end
-
   def show
     begin
-      render json: MerchantSerializer.format_merchant(Merchant.find(params[:id]))
+      render json: MerchantSerializer.new(Merchant.find(params[:id]))
     rescue ActiveRecord::RecordNotFound => error
       render json: {
         errors: [
@@ -30,5 +24,11 @@ class Api::V1::MerchantsController < ApplicationController
         ]
       }, status: :not_found
     end
+  end
+
+  private
+
+  def merchant_params
+    params.permit(:name)
   end
 end
