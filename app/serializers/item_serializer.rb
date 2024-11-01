@@ -11,7 +11,7 @@ class ItemSerializer
     def self.formatted_item(item)
         {
             id: "#{item.id}",
-            type: 'item',
+            type: "item",
             attributes: {
                 name: item.name,
                 description: item.description,
