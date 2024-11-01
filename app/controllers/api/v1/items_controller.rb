@@ -1,6 +1,6 @@
 class Api::V1::ItemsController < ApplicationController
   def index
-    items = params[:sorted] == 'price' ? Item.sort_by_price : Item.all
+    items = Item.sort_by_price(params[:sorted])
     render json: ItemSerializer.format_items(items)
   end
 
