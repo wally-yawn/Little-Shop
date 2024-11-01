@@ -17,12 +17,8 @@ RSpec.describe "merchants update action" do
       merchant_response = JSON.parse(response.body)
 
       expect(merchant_response).to have_key("data")
-      expect(merchant_response["data"]).to have_key("id")
-      expect(merchant_response["data"]["id"]).to eq(@merchant4.id)
-      expect(merchant_response["data"]).to have_key("type")
+      expect(merchant_response["data"]["id"]).to eq(@merchant4.id.to_s)
       expect(merchant_response["data"]["type"]).to eq("merchant")
-      expect(merchant_response["data"]).to have_key("attributes")
-      expect(merchant_response["data"]["attributes"]).to have_key("name")
       expect(merchant_response["data"]["attributes"]["name"]).to eq('Sweep the leg, Johnny')
     
       updated_merchant = Merchant.find(@merchant4.id)
