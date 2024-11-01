@@ -6,7 +6,7 @@ RSpec.describe "merchants create action" do
       merchant_params = { name: 'I am a new Merchant'}
 
       post "/api/v1/merchants", params: merchant_params
-      epect(response).to be_successful
+      expect(response).to be_successful
 
       merchant_response = JSON.parse(response.body)
 
