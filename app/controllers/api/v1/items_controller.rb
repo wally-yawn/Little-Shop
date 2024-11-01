@@ -1,6 +1,7 @@
 class Api::V1::ItemsController < ApplicationController
   def index
-    items = Item.sort_by_price(params[:sorted])
+    items = Item.getItems(params)
+    #change this to a single method that takes whatever parameters and does logic in the item model
     render json: ItemSerializer.format_items(items)
   end
 

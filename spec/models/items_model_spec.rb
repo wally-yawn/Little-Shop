@@ -26,12 +26,12 @@ RSpec.describe "Items API", type: :model do
   end
 
     it 'returns all items when sort_order is not "price"' do
-      result = Item.sort_by_price
+      result = Item.getItems
       expect(result).to match_array([@item1, @item2, @item3])
     end
 
     it 'returns items sorted by unit_price when sort_order is "price"' do
-      result = Item.sort_by_price('price')
+      result = Item.getItems({ sorted: 'price' })
       expect(result).to eq([@item2, @item1, @item3]) 
     end
 end 
