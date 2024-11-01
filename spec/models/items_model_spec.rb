@@ -34,4 +34,32 @@ RSpec.describe "Items API", type: :model do
       result = Item.getItems({ sorted: 'price' })
       expect(result).to eq([@item2, @item1, @item3]) 
     end
+
+    it 'returns all items for a given merchant' do
+      @merchant2 = Merchant.create(name: "Awesome Merchant 2") 
+      @item4 = Item.create(
+        name: "Stuffed Bee",
+        description: "A bee to entertain.",
+        unit_price: 18.50,
+        merchant_id: @merchant2.id
+      )
+      merchant1Items = Item.getItems({ id: @merchant.id })
+      merchant2Items = Item.getItems({ id: @merchant2.id })
+      expect(merchant1Items.length).to eq(3)
+      expect(merchant2Items.length).to eq(1)
+      expect(merchant1Items[0]).to eq(@item1)
+    end
+
+    it 'returns all items for a given merchant when there are none' do
+      Item.destroy_all
+      merchant1Items = Item.getItems({ id: @merchant.id })
+      expect(merchant1Items).to eq([])
+    end
+
+    it 'errors when the given merchant does not exist' do
+      @merchant2 = Merchant.create(name: "Awesome Merchant 2") 
+      @merchant2.destroy
+      response = Item.getItems({ id: @merchant2.id })
+      expect(true).to eq(false)
+    end
 end 

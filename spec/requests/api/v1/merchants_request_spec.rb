@@ -74,6 +74,7 @@ RSpec.describe "Merchants API" do
     end
 
     it "returns an error when attempting to fetch all items for a given merchant that does not exist" do
+      Merchant.destroy_all
       expect(true).to eq(false)
     end
   end
