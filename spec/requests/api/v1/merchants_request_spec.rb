@@ -65,5 +65,16 @@ RSpec.describe "Merchants API" do
       expect(merchants["data"].count).to eq(0)
     end
 
+    it "can fetch all items for a given merchant" do
+      expect(true).to eq(false)
+    end
+
+    it "can fetch all items for a given merchant when none exist" do
+      expect(true).to eq(false)
+    end
+
+    it "returns an error when attempting to fetch all items for a given merchant that does not exist" do
+      expect(true).to eq(false)
+    end
   end
 end
