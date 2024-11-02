@@ -149,16 +149,17 @@ RSpec.describe "Merchants API" do
     end
 
     it "returns an error when attempting to fetch all items for a given merchant that does not exist" do
-      Merchant.destroy_all
-
-      get "/api/v1/merchants/#{@merchant1.id}/items"
+      missingMerchant = @merchant1.id
+      @merchant1.destroy
+ 
+      get "/api/v1/merchants/#{missingMerchant}/items"
 
       expect(response).to_not be_successful
       expect(response.status).to eq(404)
 
       error_response = JSON.parse(response.body)
-      expect(error_response["message"]).to eq("your request could not be completed")
-      expect(error_response["errors"]).to include("Couldn't find Merchant with 'id'=#{no_merchant}")
+      expect(error_response["message"]).to eq("your query could not be completed")
+      expect(error_response["errors"]).to include("Couldn't find Merchant with 'id'=#{missingMerchant}")
     end
   end
 end

@@ -2,7 +2,7 @@ class Api::V1::ItemsController < ApplicationController
   def index
     items = Item.getItems(params)
     if items.is_a?(String)
-      render json: {error: items}, status: 404
+      render json: {"message": "your query could not be completed", "errors": ["#{items}"]}, status: 404
     else
       render json: ItemSerializer.format_items(items)
     end
