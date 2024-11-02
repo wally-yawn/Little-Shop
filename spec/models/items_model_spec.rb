@@ -57,9 +57,10 @@ RSpec.describe "Items API", type: :model do
     end
 
     it 'errors when the given merchant does not exist' do
-      @merchant2 = Merchant.create(name: "Awesome Merchant 2") 
+      @merchant2 = Merchant.create(name: "Awesome Merchant 2")
+      missingMerchant = @merchant2.id
       @merchant2.destroy
-      response = Item.getItems({ id: @merchant2.id })
-      expect(true).to eq(false)
+      response = Item.getItems({ id: missingMerchant })
+      expect(response).to eq("Couldn't find Merchant with 'id'=#{missingMerchant}")
     end
 end 

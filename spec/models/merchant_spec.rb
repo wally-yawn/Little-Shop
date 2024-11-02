@@ -42,4 +42,5 @@ RSpec.describe Merchant, type: :model do
       merchant.destroy
       expect(Item.count).to eq(0)
     end
+  end
 end
