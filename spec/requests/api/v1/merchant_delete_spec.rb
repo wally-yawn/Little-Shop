@@ -51,6 +51,11 @@ RSpec.describe "merchants destroy action" do
 
   describe "sad path test" do
     it "returns an error if the merchant does not exist" do
+      @merchant1 = Merchant.create(name: 'Wally')
+      @merchant2 = Merchant.create(name: 'James')
+      @merchant3 = Merchant.create(name: 'Natasha')
+      @merchant4 = Merchant.create(name: 'Jonathan')
+      
       no_merchant = @merchant2.id + 5
 
       delete "/api/v1/merchants/#{no_merchant}", params: { name: 'No Name' } 
