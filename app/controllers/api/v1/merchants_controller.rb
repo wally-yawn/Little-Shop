@@ -33,11 +33,11 @@ class Api::V1::MerchantsController < ApplicationController
       render json: {
         errors: [
           {
-            status: "422",
+            status: "404",
             message: error.message
           }
         ]
-      }, status: 422
+      }, status: 404
     end
   end
 
