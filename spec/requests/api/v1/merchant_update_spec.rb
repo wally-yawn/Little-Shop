@@ -26,4 +26,41 @@ RSpec.describe "merchants update action" do
       expect(updated_merchant.name).to eq('Sweep the leg, Johnny')
     end
   end
+
+  describe "sad path test" do
+    it "returns an error if the merchant does not exist" do
+      @merchant1 = Merchant.create(name: 'Wally')
+      @merchant2 = Merchant.create(name: 'James')
+      @merchant3 = Merchant.create(name: 'Natasha')
+      @merchant4 = Merchant.create(name: 'Jonathan')
+
+      no_merchant = @merchant2.id + 5
+
+      patch "/api/v1/merchants/#{no_merchant}", params: { name: 'No Name' } 
+      expect(response).to_not be_successful
+      expect(response.status).to eq(404)
+
+      error_response = JSON.parse(response.body)
+      expect(error_response["message"]).to eq("your request could not be completed")
+      expect(error_response["errors"]).to include("Couldn't find Merchant with 'id'=#{no_merchant}")
+    end
+
+    it "returns an error if an attribute is missing" do
+      @merchant1 = Merchant.create(name: 'Wally')
+      @merchant2 = Merchant.create(name: 'James')
+      @merchant3 = Merchant.create(name: 'Natasha')
+      @merchant4 = Merchant.create(name: 'Jonathan')
+      
+      current_name = @merchant3.name
+      updated_name = { name: 'No Name' }
+
+      patch "/api/v1/merchants/#{@merchant3.id}", params: {name: ""}
+      expect(response).to_not be_successful
+      expect(response.status).to eq(422)
+
+      error_response = JSON.parse(response.body)
+      expect(error_response["message"]).to eq("your request could not be completed")
+      expect(error_response["errors"]).to include("Name can't be blank")
+    end
+  end
 end
