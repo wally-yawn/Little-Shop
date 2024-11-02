@@ -7,8 +7,12 @@ class Item < ApplicationRecord
     if params[:sorted] == 'price'
       Item.all.order(:unit_price)
     elsif params.key?(:id)
-      merchant = Merchant.find(params[:id])
-      Item.all.where("merchant_id = #{merchant.id}")
+      begin
+        merchant = Merchant.find(params[:id])
+        Item.all.where("merchant_id = #{merchant.id}")
+      rescue ActiveRecord::RecordNotFound => error
+        error.message
+      end
     else
       Item.all
     end

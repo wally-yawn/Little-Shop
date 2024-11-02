@@ -1,8 +1,11 @@
 class Api::V1::ItemsController < ApplicationController
   def index
     items = Item.getItems(params)
-    #change this to a single method that takes whatever parameters and does logic in the item model
-    render json: ItemSerializer.format_items(items)
+    if items.is_a?(String)
+      render json: {error: items}, status: 404
+    else
+      render json: ItemSerializer.format_items(items)
+    end
   end
 
   def show
