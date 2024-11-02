@@ -26,7 +26,7 @@ RSpec.describe "merchants destroy action" do
       merchant_count = Merchant.count
       expect(merchant_count).to eq(4)
 
-      delete "api/v1/merchants/#{@merchant2.id}"
+      delete "/api/v1/merchants/#{@merchant2.id}"
       expect(response).to be_successful
       expect(response.status).to eq(204)
       expect(response.body).to be_empty
@@ -39,7 +39,7 @@ RSpec.describe "merchants destroy action" do
       item_count = Item.count
       expect(item_count).to eq(2)
 
-      delete "api/v1/merchants/#{@merchant2.id}"
+      delete "/api/v1/merchants/#{@merchant2.id}"
       expect(response).to be_successful
       expect(response.status).to eq(204)
       expect(response.body).to be_empty
