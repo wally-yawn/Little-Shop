@@ -94,6 +94,7 @@ RSpec.describe "Merchants API" do
       expect(data[:errors].first[:status]).to eq("422")
       expect(data[:errors].first[:message]).to eq("Couldn't find Merchant with 'id'=#{missing_id}") 
     end
+    
     it "can fetch all items for a given merchant" do
       expect(true).to eq(false)
     end
