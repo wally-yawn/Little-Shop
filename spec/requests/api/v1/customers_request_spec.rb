@@ -58,4 +58,25 @@ RSpec.describe 'Customers API', type: :request do
             expect(customer[:attributes][:last_name]).to be_a(String)
       end
     end
+    
+      it 'returns invoices associated with a specific customer' do
+        get "/api/v1/customers/#{@customer1[:id]}/invoices"
+    
+            expect(response).to be_successful
+        invoices = JSON.parse(response.body, symbolize_names: true)[:data]      
+            expect(invoices.count).to eq(1)
+            expect(invoices.first[:attributes][:status]).to eq('pending')
+            expect(invoices.first[:attributes][:merchant_id]).to eq(@merchant1.id)
+      end
+    
+      it 'returns all invoices for a merchant\'s customers' do
+        get "/api/v1/merchants/#{@merchant1[:id]}/invoices"
+    
+            expect(response).to be_successful
+        invoices = JSON.parse(response.body, symbolize_names: true)[:data]    
+            expect(invoices.count).to eq(2)
+        invoice_statuses = invoices.map { |invoice| invoice[:attributes][:status] }
+            expect(invoice_statuses).to include('pending', 'completed')
+      end
+    
 end

@@ -2,27 +2,24 @@ class Api::V1::InvoicesController < ApplicationController
   def index
     if params[:merchant_id]
       merchant = Merchant.find_by(id: params[:merchant_id])
-    if merchant.nil?
-      render json: { error: "Merchant not found" }, status: :not_found
-    return
-  end
+      if merchant.nil?
+        render json: { error: "Merchant not found" }, status: :not_found
+        return
+      end
       invoices = Invoice.by_merchant(params[:merchant_id])
     elsif params[:customer_id]
+      customer = Customer.find_by(id: params[:customer_id])
+      if customer.nil?
+        render json: { error: "Customer not found" }, status: :not_found
+        return
+      end
       invoices = Invoice.by_customer(params[:customer_id])
     else
       invoices = Invoice.all
-  end
-  render json: InvoiceSerializer.format_invoices(invoices)
-  end
-    
-  def show
-    invoice = Invoice.find_by(id: params[:id])
-    if invoice
-      render json: InvoiceSerializer.format_invoice(invoice)
-    else
-      render json: { error: 'Invoice not found' }, status: :not_found
     end
+    render json: InvoiceSerializer.format_invoices(invoices)
   end
+
     
   def create
     merchant_id = params[:merchant_id]
