@@ -1,7 +1,12 @@
 class Api::V1::CustomersController < ApplicationController
   def index
     merchant = Merchant.find(params[:merchant_id])
-    customers = merchant.customers 
+    invoices = Invoice.where(merchant_id: merchant.id)
+    customers = []
+    invoices.each do |invoice|
+      customer = invoice.customer
+      customers << customer
+    end
     render json: CustomerSerializer.format_customers(customers)
   end
         
@@ -14,6 +19,4 @@ class Api::V1::CustomersController < ApplicationController
     customer = Customer.create(customer_params)
     render json: CustomerSerializer.format_customers([customer])
   end
- end
-
-   
+end

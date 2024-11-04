@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe 'Invoices API', type: :request do
     before(:each) do
         @merchant = Merchant.create!(name: "Merchant A")
-        @customer = Customer.create!(first_name: "Lisa", last_name: "Reeve", merchant_id: @merchant.id)
+        @customer = Customer.create!(first_name: "Lisa", last_name: "Reeve")
         @invoice1 = Invoice.create!(customer: @customer, merchant: @merchant, status: "completed")
         @invoice2 = Invoice.create!(customer: @customer, merchant: @merchant, status: "pending")
     end
@@ -79,25 +79,25 @@ end
 
   describe 'GET /api/v1/invoices/:id' do
     it 'returns a specific invoice' do
-    get "/api/v1/invoices/#{@invoice1.id}"
+      get "/api/v1/invoices/#{@invoice1.id}"
 
-        expect(response).to be_successful
+      expect(response).to be_successful
       invoice = JSON.parse(response.body, symbolize_names: true)[:data]
-        expect(invoice).to have_key(:id)
-        expect(invoice[:id]).to eq(@invoice1.id.to_s)
-        expect(invoice[:attributes]).to have_key(:status)
-        expect(invoice[:attributes][:status]).to eq(@invoice1.status)
-        expect(invoice[:attributes]).to have_key(:customer_id)
-        expect(invoice[:attributes][:customer_id]).to eq(@customer.id)
-    end
+      expect(invoice).to have_key(:id)
+      expect(invoice[:id]).to eq(@invoice1.id.to_s)
+      expect(invoice[:attributes]).to have_key(:status)
+      expect(invoice[:attributes][:status]).to eq(@invoice1.status)
+      expect(invoice[:attributes]).to have_key(:customer_id)
+      expect(invoice[:attributes][:customer_id]).to eq(@customer.id)
+  end
 
-    it 'returns a 404 error if the invoice does not exist' do
-      get "/api/v1/invoices/999" 
+  it 'returns a 404 error if the invoice does not exist' do
+    get "/api/v1/invoices/999" 
 
-        expect(response).to have_http_status(:not_found)
-      error_response = JSON.parse(response.body, symbolize_names: true)
-        expect(error_response).to have_key(:error)
-        expect(error_response[:error]).to eq("Invoice not found")
+      expect(response).to have_http_status(:not_found)
+    error_response = JSON.parse(response.body, symbolize_names: true)
+      expect(error_response).to have_key(:error)
+      expect(error_response[:error]).to eq("Invoice not found")
     end
   end
 end
