@@ -193,7 +193,7 @@ RSpec.describe "Merchants API" do
     end
 
     it "does not include item count when not asked for" do
-      get "/api/v1/merchants"
+      get "/api/v1/merchants"!!!
       expect(response).to be_successful
     
       merchants = JSON.parse(response.body)
@@ -201,6 +201,7 @@ RSpec.describe "Merchants API" do
       expect(merchants["data"].count).to eq(4)
       merchants["data"].each do |merchant|
         expect(merchant["attributes"]).to have_key("name")
+        binding.pry
         expect(merchant["attributes"]).to_not have_key("item_count")
       end
     end
