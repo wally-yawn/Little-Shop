@@ -94,6 +94,49 @@ RSpec.describe "Merchants API" do
       expect(data[:errors].first[:message]).to eq("Couldn't find Merchant with 'id'=#{missing_id}") 
     end
 
+
+    it "includes and item count when asked" do
+      @item1 = Item.create(
+      name: "Catnip Toy",
+      description: "A soft toy filled with catnip.",
+      unit_price: 12.99,
+      merchant_id: @merchant1.id
+      )
+      @item2 = Item.create(
+      name: "Laser Pointer",
+      description: "A laser pointer to keep your cat active.",
+      unit_price: 9.99,
+      merchant_id: @merchant1.id
+      )
+
+      get "/api/v1/merchants?count=true"
+      expect(response).to be_successful
+
+      merchants = JSON.parse(response.body)
+
+      expect(merchants["data"].count).to eq(4)
+      merchants["data"].each do |merchant|
+        expect(merchant).to have_key("id")
+        expect(merchant["attributes"]).to have_key("name")
+        expect(merchant["attributes"]).to have_key("item_count")
+
+        individual_merchant = Merchant.find(merchant["id"].to_i)
+        expect(merchant["attributes"]["item_count"]).to eq(individual_merchant.items.count)
+      end
+    end
+
+    it "does not include item count when not asked for" do
+      get "/api/v1/merchants"
+      expect(response).to be_successful
+    
+      merchants = JSON.parse(response.body)
+    
+      expect(merchants["data"].count).to eq(4)
+      merchants["data"].each do |merchant|
+        expect(merchant["attributes"]).to have_key("name")
+        expect(merchant["attributes"]).to_not have_key("item_count")
+      end
+
     it "can fetch all items for a given merchant" do
       @item1 = Item.create(
         name: "Catnip Toy",
@@ -160,6 +203,7 @@ RSpec.describe "Merchants API" do
       error_response = JSON.parse(response.body)
       expect(error_response["message"]).to eq("your query could not be completed")
       expect(error_response["errors"]).to include("Couldn't find Merchant with 'id'=#{missingMerchant}")
+
     end
   end
 end
