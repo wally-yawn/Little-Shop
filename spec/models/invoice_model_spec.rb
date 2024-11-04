@@ -9,7 +9,7 @@ RSpec.describe Invoice, type: :model do
     describe 'class methods' do
         before(:each) do
             @merchant = Merchant.create!(name: "Merchant A")
-            @customer = Customer.create!(first_name: "Lisa", last_name: "Reeve", merchant: @merchant)
+            @customer = Customer.create!(first_name: "Lisa", last_name: "Reeve")
             @invoice1 = Invoice.create!(customer: @customer, merchant: @merchant, status: "completed")
             @invoice2 = Invoice.create!(customer: @customer, merchant: @merchant, status: "pending")
             @invoice3 = Invoice.create!(customer: @customer, merchant: @merchant, status: "completed")

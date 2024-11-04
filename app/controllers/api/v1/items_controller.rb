@@ -19,5 +19,16 @@ class Api::V1::ItemsController < ApplicationController
   
   def not_found_response(exception)
     render json: ErrorSerializer.format_error(exception, "404"), status: :not_found
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: 'Item not found' }, status: :not_found
+  end  
+
+  def destroy
+    begin
+      item = Item.find(params[:id])
+      item.destroy
+    rescue ActiveRecord::RecordNotFound => error
+      render json: {"message": "your query could not be completed", "errors": ["#{error}"]}, status: 404
+    end
   end
 end

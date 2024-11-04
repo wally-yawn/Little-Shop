@@ -6,10 +6,10 @@ RSpec.describe 'Customers API', type: :request do
             @merchant1 = Merchant.create!(name: "Merchant 1")
             @merchant2 = Merchant.create!(name: "Merchant 2")
 
-            @customer1 = Customer.create!(first_name: "Lisa", last_name: "Reeve", merchant: @merchant1)
-            @customer2 = Customer.create!(first_name: "Michelle", last_name: "Plank", merchant: @merchant1)
-            @customer3 = Customer.create!(first_name: "Karie", last_name: "Butterfield", merchant: @merchant2)
-            @customer4 = Customer.create!(first_name: "Cathy", last_name: "Rojas", merchant: @merchant1)
+            @customer1 = Customer.create!(first_name: "Lisa", last_name: "Reeve")
+            @customer2 = Customer.create!(first_name: "Michelle", last_name: "Plank")
+            @customer3 = Customer.create!(first_name: "Karie", last_name: "Butterfield")
+            @customer4 = Customer.create!(first_name: "Cathy", last_name: "Rojas")
 
             @invoice1 = Invoice.create!(merchant: @merchant1, customer: @customer1)
             @invoice2 = Invoice.create!(merchant: @merchant1, customer: @customer2, status: 'completed')
@@ -20,7 +20,7 @@ RSpec.describe 'Customers API', type: :request do
     
             expect(response).to be_successful
         customers = JSON.parse(response.body, symbolize_names: true)[:data]
-            expect(customers.count).to eq(3)
+            expect(customers.count).to eq(2)
 
         customers.each do |customer|
             expect(customer).to have_key(:id)
