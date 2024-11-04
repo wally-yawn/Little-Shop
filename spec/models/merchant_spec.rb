@@ -42,4 +42,26 @@ RSpec.describe Merchant, type: :model do
       expect(Item.count).to eq(0)
     end
   end
+
+  describe "self.getMerchant" do
+    @merchant1 = Merchant.create(name: 'Wally')
+    @item1 = Item.create(
+      name: "Catnip Toy",
+      description: "A soft toy filled with catnip.",
+      unit_price: 12.99,
+      merchant_id: @merchant1.id
+    )
+
+    it 'gets merchant if merchant_id is passed as param' do
+      expect(Merchant.getMerchant({id: "#{@merchant1.id}"}).to eq(@merchant1))
+    end
+
+    it "gets merchant if item_id is passed as param" do
+      expect(false)
+    end
+
+    it "returns an error if item_id is passed as param but does not exist" do
+      expect(false)
+    end
+  end
 end

@@ -2,7 +2,9 @@ require 'rails_helper'
 
 RSpec.describe "Items API", type: :request do 
   before(:each) do
+    Item.destroy_all
     @merchant = Merchant.create(name: "Awesome Merchant") 
+
     @item1 = Item.create(
       name: "Catnip Toy",
       description: "A soft toy filled with catnip.",
@@ -76,7 +78,6 @@ RSpec.describe "Items API", type: :request do
 
   it 'can sort items by price' do
     get '/api/v1/items', params: { sorted: 'price' }
-
     expect(response).to be_successful
     expect(response.status).to eq(200)
     
@@ -178,7 +179,7 @@ RSpec.describe "Items API", type: :request do
     missing_id = @item1.id
     @item1.destroy
 
-    get "/api/v1/items/#{@missing_id}/merchant"
+    get "/api/v1/items/987654321/merchant"
 
     expect(response).to_not be_successful
     expect(response.status).to eq(404)

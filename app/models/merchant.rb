@@ -11,10 +11,14 @@ class Merchant < ApplicationRecord
     end
   end
 
-  def self.getId(params)
+  def self.getMerchant(params)
     if params[:item_id]
-      item = Item.find_by(id: params[:item_id])
-      item.merchant
+      begin
+        item = Item.find(params[:item_id])
+        item.merchant
+      rescue ActiveRecord::RecordNotFound => error
+        error.message
+      end
     else
       Merchant.find(params[:id])
     end
