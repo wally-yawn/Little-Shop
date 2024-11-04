@@ -83,7 +83,6 @@ RSpec.describe "Merchants API" do
       @merchant2.destroy
 
       get "/api/v1/merchants/#{missing_id}"
-      # binding.pry
       expect(response).to_not be_successful
       expect(response.status).to eq(404)
   
