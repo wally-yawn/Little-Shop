@@ -109,6 +109,10 @@ RSpec.describe "Items API", type: :request do
     expect(response).to be_successful
     items = JSON.parse(response.body)
     expect(items["data"].count).to eq(3)
+    get "/api/v1/items"
+    expect(response).to be_successful
+    items = JSON.parse(response.body)
+    expect(items["data"].count).to eq(3)
 
     items["data"].each do |item|
       expect(item).to have_key("id")
@@ -117,6 +121,58 @@ RSpec.describe "Items API", type: :request do
       expect(item["type"]).to eq("item")
       expect(item["attributes"]).to have_key("name")
       expect(item["attributes"]["name"]).to be_a(String)
+    end
+  end
+
+  describe 'delete single item' do
+    it 'can delete an single item' do
+      itemCount = Item.count
+      delete "/api/v1/items/#{@item1.id}"
+      expect(response).to be_successful
+      expect(response.status).to eq(204)
+      expect(response.body).to be_empty
+      expect(Item.count).to eq(itemCount - 1)
+    end
+
+    it 'returns an error if the requested item does not exist' do
+      itemCount = Item.count
+      item1Id = @item1.id
+      @item1.destroy
+
+      delete "/api/v1/items/#{item1Id}" 
+      expect(response).to_not be_successful
+      expect(response.status).to eq(404)
+
+      error_response = JSON.parse(response.body)
+      expect(error_response["message"]).to eq("your query could not be completed")
+      expect(error_response["errors"]).to include("Couldn't find Item with 'id'=#{item1Id}")
+    end
+
+    it 'deletes all associated invoice items when it deletes a single item' do
+      customer = Customer.create!(first_name: "Wally", last_name: "Wallace")
+      invoice = Invoice.create!(customer_id: customer.id, merchant_id: @merchant.id, status: "shipped")
+      invoice2 = Invoice.create!(customer_id: customer.id, merchant_id: @merchant.id, status: "returned")
+      invoice_item1 = InvoiceItem.create!(item_id: @item1.id, invoice_id: invoice.id, quantity: 3, unit_price: 9.99)
+      invoice_item2 = InvoiceItem.create!(item_id: @item1.id, invoice_id: invoice2.id, quantity: 2, unit_price: 10.99)
+
+      invoiceItemCount = InvoiceItem.count
+      delete "/api/v1/items/#{@item1.id}"
+      expect(response).to be_successful
+      expect(response.status).to eq(204)
+      expect(response.body).to be_empty
+      expect(InvoiceItem.count).to eq(invoiceItemCount - 2)
+    end
+
+  describe "sad path test" do
+    it "returns an error if the item does not exist" do
+      get "/api/v1/items/3231" 
+      expect(response).to_not be_successful
+      expect(response.status).to eq(404)
+
+      error_response = JSON.parse(response.body)
+      expect(error_response["message"]).to eq("your request could not be completed")
+      
+      expect(error_response["errors"].first["title"]).to eq("Couldn't find Item with 'id'=3231")
     end
   end
 
