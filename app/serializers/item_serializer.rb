@@ -1,4 +1,5 @@
 class ItemSerializer
+    include JSONAPI::Serializer 
 
     def self.format_items(items)
         { data: items.map { |item| formatted_item(item) }}
@@ -20,4 +21,4 @@ class ItemSerializer
             }
         }
     end
-  end
+end
