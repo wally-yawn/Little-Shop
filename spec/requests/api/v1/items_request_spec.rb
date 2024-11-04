@@ -127,5 +127,20 @@ RSpec.describe "Items API", type: :request do
       expect(error_response["message"]).to eq("your query could not be completed")
       expect(error_response["errors"]).to include("Couldn't find Item with 'id'=#{item1Id}")
     end
+
+    it 'deletes all associated invoice items when it deletes a single item' do
+      customer = Customer.create!(first_name: "Wally", last_name: "Wallace")
+      invoice = Invoice.create!(customer_id: customer.id, merchant_id: @merchant.id, status: "shipped")
+      invoice2 = Invoice.create!(customer_id: customer.id, merchant_id: @merchant.id, status: "returned")
+      invoice_item1 = InvoiceItem.create!(item_id: @item1.id, invoice_id: invoice.id, quantity: 3, unit_price: 9.99)
+      invoice_item2 = InvoiceItem.create!(item_id: @item1.id, invoice_id: invoice2.id, quantity: 2, unit_price: 10.99)
+
+      invoiceItemCount = InvoiceItem.count
+      delete "/api/v1/items/#{@item1.id}"
+      expect(response).to be_successful
+      expect(response.status).to eq(204)
+      expect(response.body).to be_empty
+      expect(InvoiceItem.count).to eq(invoiceItemCount - 2)
+    end
   end
 end
