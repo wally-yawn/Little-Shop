@@ -8,7 +8,7 @@ class Api::V1::MerchantsController < ApplicationController
   def create
     begin
       merchant = Merchant.create!(merchant_params)
-      render json:MerchantSerializer.new(merchant)
+      render json:MerchantSerializer.new(merchant), status: 201
     rescue ActiveRecord::RecordInvalid => errors
       render json: error_messages(errors.record.errors.full_messages, 422), status: 422
     end
@@ -23,6 +23,16 @@ class Api::V1::MerchantsController < ApplicationController
       render json: error_messages([error.message], 404), status: 404
     rescue ActiveRecord::RecordInvalid => errors
       render json: error_messages(errors.record.errors.full_messages, 422), status: 422
+    end
+  end
+
+  def destroy
+    begin
+      merchant = Merchant.find(params[:id])
+      merchant.destroy
+      head :no_content 
+    rescue ActiveRecord::RecordNotFound => error
+      render json: error_messages([error.message], 404), status: 404
     end
   end
 
