@@ -93,7 +93,6 @@ RSpec.describe "Merchants API" do
       expect(data[:errors].first[:message]).to eq("Couldn't find Merchant with 'id'=#{missing_id}") 
     end
 
-
     it "includes and item count when asked" do
       @item1 = Item.create(
       name: "Catnip Toy",
@@ -135,6 +134,7 @@ RSpec.describe "Merchants API" do
         expect(merchant["attributes"]).to have_key("name")
         expect(merchant["attributes"]).to_not have_key("item_count")
       end
+    end
 
     it "can fetch all items for a given merchant" do
       @item1 = Item.create(
