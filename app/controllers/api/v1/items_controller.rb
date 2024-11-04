@@ -2,8 +2,12 @@ class Api::V1::ItemsController < ApplicationController
   rescue_from ActiveRecord::RecordNotFound, with: :not_found_response
 
   def index
-    items = Item.sort_by_price(params[:sorted])
-    render json: ItemSerializer.format_items(items)
+    items = Item.getItems(params)
+    if items.is_a?(String)
+      render json: {"message": "your query could not be completed", "errors": ["#{items}"]}, status: 404
+    else
+      render json: ItemSerializer.format_items(items)
+    end
   end
 
   def show

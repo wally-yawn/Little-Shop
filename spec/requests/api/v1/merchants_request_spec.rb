@@ -65,7 +65,6 @@ RSpec.describe "Merchants API" do
       expect(merchants["data"].count).to eq(0)
     end
 
-
     it 'can fetch a single merchant by id' do
       get "/api/v1/merchants/#{@merchant1.id}"
       expect(response).to be_successful
@@ -86,13 +85,81 @@ RSpec.describe "Merchants API" do
       get "/api/v1/merchants/#{missing_id}"
       # binding.pry
       expect(response).to_not be_successful
-      expect(response.status).to eq(422)
+      expect(response.status).to eq(404)
   
       data = JSON.parse(response.body, symbolize_names: true)
   
       expect(data[:errors]).to be_a(Array)
-      expect(data[:errors].first[:status]).to eq("422")
+      expect(data[:errors].first[:status]).to eq("404")
       expect(data[:errors].first[:message]).to eq("Couldn't find Merchant with 'id'=#{missing_id}") 
+    end
+
+    it "can fetch all items for a given merchant" do
+      @item1 = Item.create(
+        name: "Catnip Toy",
+        description: "A soft toy filled with catnip.",
+        unit_price: 12.99,
+        merchant_id: @merchant1.id
+      )
+
+      @item2 = Item.create(
+        name: "Laser Pointer",
+        description: "A laser pointer to keep your cat active.",
+        unit_price: 9.99,
+        merchant_id: @merchant1.id
+      )
+
+      get "/api/v1/merchants/#{@merchant1.id}/items"
+
+      expect(response).to be_successful
+
+      items = JSON.parse(response.body, symbolize_names: true)[:data]
+      expect(items).to be_an(Array)
+
+      item1 = items[0]
+      expect(item1[:id].to_i).to be_an(Integer)
+      expect(item1[:type]).to eq('item')
+
+      attrs1 = item1[:attributes]
+
+      expect(attrs1[:name]).to eq("Catnip Toy")
+      expect(attrs1[:description]).to eq("A soft toy filled with catnip.")
+      expect(attrs1[:unit_price]).to eq(12.99)
+      expect(attrs1[:merchant_id]).to eq(@merchant1.id)
+
+      item2 = items[1]
+      expect(item2[:id].to_i).to be_an(Integer)
+      expect(item2[:type]).to eq('item')
+
+      attrs2 = item2[:attributes]
+
+      expect(attrs2[:name]).to eq("Laser Pointer")
+      expect(attrs2[:description]).to eq("A laser pointer to keep your cat active.")
+      expect(attrs2[:unit_price]).to eq(9.99)
+      expect(attrs2[:merchant_id]).to eq(@merchant1.id)
+    end
+
+    it "can fetch all items for a given merchant when none exist" do
+      Item.destroy_all
+      
+      get "/api/v1/merchants/#{@merchant1.id}/items"
+      expect(response).to be_successful
+      items = JSON.parse(response.body)
+      expect(items["data"].count).to eq(0)
+    end
+
+    it "returns an error when attempting to fetch all items for a given merchant that does not exist" do
+      missingMerchant = @merchant1.id
+      @merchant1.destroy
+ 
+      get "/api/v1/merchants/#{missingMerchant}/items"
+
+      expect(response).to_not be_successful
+      expect(response.status).to eq(404)
+
+      error_response = JSON.parse(response.body)
+      expect(error_response["message"]).to eq("your query could not be completed")
+      expect(error_response["errors"]).to include("Couldn't find Merchant with 'id'=#{missingMerchant}")
     end
   end
 end
