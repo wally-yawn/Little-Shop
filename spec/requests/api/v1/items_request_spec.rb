@@ -142,7 +142,7 @@ RSpec.describe "Items API", type: :request do
       expect(response.body).to be_empty
       expect(InvoiceItem.count).to eq(invoiceItemCount - 2)
     end
-
+  end
   describe "sad path test" do
     it "returns an error if the item does not exist" do
       get "/api/v1/items/3231" 
@@ -153,6 +153,47 @@ RSpec.describe "Items API", type: :request do
       expect(error_response["message"]).to eq("your request could not be completed")
       
       expect(error_response["errors"].first["title"]).to eq("Couldn't find Item with 'id'=3231")
+    end
+  end
+
+  describe "updating an item" do
+
+    it 'creates a new item' do
+
+       item_attributes = {
+          name: "More Cat Things", 
+          description: "Stuff to keep cats happy", 
+          unit_price: 30.00, 
+          merchant_id: @merchant.id
+    }
+      post '/api/v1/items#create', params: { item: item_attributes }
+
+      item = JSON.parse(response.body, symbolize_names: true)[:data].first
+   
+      expect(item[:attributes][:name]).to eq(item_attributes[:name])
+      expect(item[:attributes][:description]).to eq(item_attributes[:description])
+      expect(item[:attributes][:unit_price]).to eq(item_attributes[:unit_price])
+  
+  end
+
+    it "can update an existing item" do
+      id = Item.create(
+        name: "More Cat Things", 
+        description: "Stuff to keep cats happy", 
+        unit_price: 30.00, 
+        merchant_id: @merchant.id).id
+      previous_name = Item.last.name
+      item_params = { name: "Padam litter", description: "Cat litter made out of tofu", unit_price: 28.99 }
+      headers = {"CONTENT_TYPE" => "application/json"}
+
+      patch "/api/v1/items/#{id}", headers: headers, params: JSON.generate({item: item_params})
+      item = Item.find_by(id: id)
+
+      expect(response).to be_successful
+      expect(item.name).to_not eq(previous_name)
+      expect(item.name).to eq("Padam litter")
+      expect(item.description).to eq("Cat litter made out of tofu")
+      expect(item.unit_price).to eq(28.99)
     end
   end
 end
