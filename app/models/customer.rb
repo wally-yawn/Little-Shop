@@ -1,5 +1,4 @@
 class Customer < ApplicationRecord
-  belongs_to :merchant
   has_many :invoices
 
   validates :first_name, presence: true

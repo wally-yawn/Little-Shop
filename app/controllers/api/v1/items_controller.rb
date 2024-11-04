@@ -14,4 +14,13 @@ class Api::V1::ItemsController < ApplicationController
   rescue ActiveRecord::RecordNotFound
     render json: { error: 'Item not found' }, status: :not_found
   end  
+
+  def destroy
+    begin
+      item = Item.find(params[:id])
+      item.destroy
+    rescue ActiveRecord::RecordNotFound => error
+      render json: {"message": "your query could not be completed", "errors": ["#{error}"]}, status: 404
+    end
+  end
 end
