@@ -1,6 +1,5 @@
 class Merchant < ApplicationRecord
   validates :name, presence: true
- get_all_merchants_with_returned_items
   has_many :invoices
 
 
