@@ -10,15 +10,11 @@ class Invoice < ApplicationRecord
 
   #TODO - add error handling
   def self.filter(params)
-    if params.include?(:merchant_id)
       if params.include?(:status)
         invoices = Invoice.where(merchant_id: params[:merchant_id], status: params[:status])
       else 
         invoices = Invoice.where(merchant_id: params[:merchant_id])
       end
-    else
-      invoices = Invoice.all
-    end
   end
 
   def self.by_merchant(merchant_id)
