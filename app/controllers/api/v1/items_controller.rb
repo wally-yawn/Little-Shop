@@ -16,8 +16,12 @@ class Api::V1::ItemsController < ApplicationController
   end
 
   def create
-    item = Item.create(item_params)
-    render json: ItemSerializer.format_items([item])
+    begin
+      item = Item.create!(item_params)
+      render json: ItemSerializer.format_items([item])
+    rescue ActiveRecord::RecordInvalid => errors
+      render json: error_messages(errors.record.errors.full_messages, 422), status: 422
+    end
   end
 
   def update
@@ -47,5 +51,13 @@ class Api::V1::ItemsController < ApplicationController
   rescue ActiveRecord::RecordNotFound
     render json: { error: 'Item not found' }, status: :not_found
   end  
+
+  def error_messages(messages, status)
+    {
+      message: "your request could not be completed",
+      errors: messages,
+      status: status
+    }
+  end
 
 end

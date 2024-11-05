@@ -2,6 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "Items API", type: :request do 
   before(:each) do
+    Item.destroy_all
     @merchant = Merchant.create(name: "Awesome Merchant") 
     @item1 = Item.create(
       name: "Catnip Toy",
@@ -160,7 +161,7 @@ RSpec.describe "Items API", type: :request do
 
     it 'creates a new item' do
 
-       item_attributes = {
+      item_attributes = {
           name: "More Cat Things", 
           description: "Stuff to keep cats happy", 
           unit_price: 30.00, 
@@ -168,13 +169,26 @@ RSpec.describe "Items API", type: :request do
     }
       post '/api/v1/items#create', params: { item: item_attributes }
 
-      item = JSON.parse(response.body, symbolize_names: true)[:data].first
-   
+      item = JSON.parse(response.body, symbolize_names: true)[:data].first   
       expect(item[:attributes][:name]).to eq(item_attributes[:name])
       expect(item[:attributes][:description]).to eq(item_attributes[:description])
       expect(item[:attributes][:unit_price]).to eq(item_attributes[:unit_price])
+    end
+
+
+    it "returns an error if required params are missing(sadpath create)" do
+      item_params = { description: "Cat litter made out of tofu", unit_price: nil, merchant_id: @merchant.id  }
+
+      post "/api/v1/items", params:{item: item_params}
+      binding.pry
+      expect(response).to_not be_successful
+      expect(response.status).to eq(422)
+
+      error_response = JSON.parse(response.body)
+      expect(error_response["message"]).to eq("your request could not be completed")
+      expect(error_response["errors"]).to include("Name can't be blank")
+    end
   
-  end
 
     it "can update an existing item" do
       id = Item.create(
@@ -197,3 +211,4 @@ RSpec.describe "Items API", type: :request do
     end
   end
 end
+
