@@ -20,7 +20,11 @@ class Merchant < ApplicationRecord
         error.message
       end
     else
-      Merchant.find(params[:id])
+      begin
+        Merchant.find(params[:id])
+      rescue ActiveRecord::RecordNotFound => error
+        error.message
+      end
     end
   end
 end

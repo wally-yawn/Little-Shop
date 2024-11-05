@@ -37,18 +37,11 @@ class Api::V1::MerchantsController < ApplicationController
   end
 
   def show
-    begin
-      merchant = Merchant.getMerchant(params)
+    merchant = Merchant.getMerchant(params)
+    if merchant.is_a?(String)
+      render json: {"message": "your query could not be completed", "errors": ["#{merchant}"]}, status: 404
+    else
       render json: MerchantSerializer.new(merchant)
-    rescue ActiveRecord::RecordNotFound => error
-      render json: {
-        errors: [
-          {
-            status: "404",
-            message: error.message
-          }
-        ]
-      }, status: 404
     end
   end
 

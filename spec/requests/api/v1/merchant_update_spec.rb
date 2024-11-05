@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.describe "merchants update action" do
   
   before :each do
+    Merchant.destroy_all
     @merchant1 = Merchant.create(name: 'Wally')
     @merchant2 = Merchant.create(name: 'James')
     @merchant3 = Merchant.create(name: 'Natasha')
