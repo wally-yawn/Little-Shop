@@ -7,7 +7,6 @@ class Item < ApplicationRecord
   belongs_to :merchant
 
   def self.getItems(params = {})
-    #change this to a generic method that uses some if logic to call helper methods
     if params[:sorted] == 'price'
       Item.all.order(:unit_price)
     elsif params.key?(:id)
