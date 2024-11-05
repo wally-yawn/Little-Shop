@@ -4,6 +4,7 @@ RSpec.describe "Items API", type: :request do
   before(:each) do
     Item.destroy_all
     @merchant = Merchant.create(name: "Awesome Merchant") 
+
     @item1 = Item.create(
       name: "Catnip Toy",
       description: "A soft toy filled with catnip.",
@@ -77,7 +78,6 @@ RSpec.describe "Items API", type: :request do
 
   it 'can sort items by price' do
     get '/api/v1/items', params: { sorted: 'price' }
-
     expect(response).to be_successful
     expect(response.status).to eq(200)
     
@@ -90,6 +90,10 @@ RSpec.describe "Items API", type: :request do
   end
 
   it "can fetch multiple items" do
+    get "/api/v1/items"
+    expect(response).to be_successful
+    items = JSON.parse(response.body)
+    expect(items["data"].count).to eq(3)
     get "/api/v1/items"
     expect(response).to be_successful
     items = JSON.parse(response.body)
@@ -144,6 +148,9 @@ RSpec.describe "Items API", type: :request do
       expect(InvoiceItem.count).to eq(invoiceItemCount - 2)
     end
   end
+ return_the_merchant_associated_with_an_item
+
+
   describe "sad path test" do
     it "returns an error if the item does not exist" do
       get "/api/v1/items/3231" 
@@ -156,6 +163,37 @@ RSpec.describe "Items API", type: :request do
       expect(error_response["errors"].first["title"]).to eq("Couldn't find Item with 'id'=3231")
     end
   end
+
+return_the_merchant_associated_with_an_item
+  it 'can return the merchant associated with an item' do
+    get "/api/v1/items/#{@item1.id}/merchant"
+    expect(response).to be_successful
+    merchant = JSON.parse(response.body)
+
+    expect(merchant["data"]).to have_key("id")
+    expect(merchant["data"]["id"]).to be_a(String)
+    expect(merchant["data"]).to have_key("type")
+    expect(merchant["data"]["type"]).to eq("merchant")
+    expect(merchant["data"]["attributes"]).to have_key("name")
+    expect(merchant["data"]["attributes"]["name"]).to eq("Awesome Merchant")
+  end
+
+  it 'returns a 404 if an item id does not exist when requesting the merchant' do
+    missing_id = @item1.id
+    @item1.destroy
+
+    get "/api/v1/items/#{missing_id}/merchant"
+
+    expect(response).to_not be_successful
+    expect(response.status).to eq(404)
+
+    data = JSON.parse(response.body, symbolize_names: true)
+
+    expect(data[:errors]).to be_a(Array)
+    expect(data[:message]).to eq("your query could not be completed") 
+    expect(data[:errors].first).to eq("Couldn't find Item with 'id'=#{missing_id}") 
+  end
+end
 
   describe "updating an item" do
 
@@ -239,4 +277,5 @@ RSpec.describe "Items API", type: :request do
     end
   end
 end
+
 
