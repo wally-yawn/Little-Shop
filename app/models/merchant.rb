@@ -5,7 +5,7 @@ class Merchant < ApplicationRecord
   def self.queried(params)
     merchants = Merchant.all
     merchants = Merchant.sort(params)
-    merchants = Merchant.item_count(merchants, params[:count])
+    merchants = params[:count] == 'true' ? Merchant.with_item_count : merchants
     merchants
   end
 
@@ -17,14 +17,11 @@ class Merchant < ApplicationRecord
     end
   end
 
-  def self.item_count(merchants, count_param)
-    if count_param == 'true'
-      merchants.select("merchants.*, COUNT(items.id) AS item_count")
+  def self.with_item_count
+      select("merchants.*, COUNT(items.id) AS item_count")
         .left_joins(:items)
         .group("merchants.id")
-    else
-      merchants
-    end
+        
   end
 end
 
