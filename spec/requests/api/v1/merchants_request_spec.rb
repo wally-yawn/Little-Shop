@@ -66,6 +66,37 @@ RSpec.describe "Merchants API" do
       expect(merchants["data"].count).to eq(0)
     end
 
+    it "can returns only merchants with returns" do
+      customer1 = Customer.create!(first_name: "Wally", last_name: "Wallace")
+      invoice1 = Invoice.create!(customer_id: "#{customer1.id}", merchant_id: "#{@merchant1.id}", status: "returned")
+      invoice2 = Invoice.create!(customer_id: "#{customer1.id}", merchant_id: "#{@merchant1.id}", status: "shipped")
+      invoice3 = Invoice.create!(customer_id: "#{customer1.id}", merchant_id: "#{@merchant2.id}", status: "returned")
+      invoice2 = Invoice.create!(customer_id: "#{customer1.id}", merchant_id: "#{@merchant3.id}", status: "shipped")
+
+      get "/api/v1/merchants?status=returned"
+      expect(response).to be_successful
+      merchants = JSON.parse(response.body)
+      expect(merchants["data"].count).to eq(2)
+      expect(merchants["data"][0]["id"]).to eq("#{@merchant1.id}")
+      expect(merchants["data"][1]["id"]).to eq("#{@merchant2.id}")
+    end
+
+    it "can return merchants with returns when no merchants exist" do
+      Merchant.destroy_all
+
+      get "/api/v1/merchants?status=returned"
+      expect(response).to be_successful
+      merchants = JSON.parse(response.body)
+      expect(merchants["data"].count).to eq(0)
+    end
+
+    it "can return merchants with returns when no merchants with returns exist" do
+      get "/api/v1/merchants?status=returned"
+      expect(response).to be_successful
+      merchants = JSON.parse(response.body)
+      expect(merchants["data"].count).to eq(0)
+    end
+
     it 'can fetch a single merchant by id' do
       get "/api/v1/merchants/#{@merchant1.id}"
       expect(response).to be_successful
