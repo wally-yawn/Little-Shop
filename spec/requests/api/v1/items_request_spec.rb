@@ -180,7 +180,7 @@ RSpec.describe "Items API", type: :request do
       item_params = { description: "Cat litter made out of tofu", unit_price: nil, merchant_id: @merchant.id  }
 
       post "/api/v1/items", params:{item: item_params}
-      binding.pry
+      
       expect(response).to_not be_successful
       expect(response.status).to eq(422)
 
@@ -208,6 +208,34 @@ RSpec.describe "Items API", type: :request do
       expect(item.name).to eq("Padam litter")
       expect(item.description).to eq("Cat litter made out of tofu")
       expect(item.unit_price).to eq(28.99)
+    end
+  end
+
+  describe "sad path test" do
+    it "returns an error if the item does not exist" do
+      no_item = @item2.id + 5
+
+      patch "/api/v1/items/#{no_item}", params: { name: 'No Name' } 
+      expect(response).to_not be_successful
+      expect(response.status).to eq(404)
+
+      error_response = JSON.parse(response.body)
+      expect(error_response["message"]).to eq("your request could not be completed")
+      expect(error_response["errors"]).to include("Couldn't find Item with 'id'=#{no_item}")
+    end
+
+    it "returns an error if an attribute is missing" do
+      current_name = @item3.name
+      updated_name = { name: 'No Name' }
+      item_params = { name: "", description: "Cat litter made out of tofu", unit_price: 28.99, merchant_id: @merchant.id  }
+
+      patch "/api/v1/items/#{@item3.id}", params: {item: item_params}
+      expect(response).to_not be_successful
+      expect(response.status).to eq(422)
+
+      error_response = JSON.parse(response.body)
+      expect(error_response["message"]).to eq("your request could not be completed")
+      expect(error_response["errors"]).to include("Name can't be blank")
     end
   end
 end

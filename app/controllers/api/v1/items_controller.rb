@@ -25,10 +25,16 @@ class Api::V1::ItemsController < ApplicationController
   end
 
   def update
+    begin
     item = Item.find(params[:id])
-    item.update(item_params)
+    item.update!(item_params)
 
     render json: ItemSerializer.format_single_item(item)
+  rescue ActiveRecord::RecordNotFound => error
+    render json: error_messages([error.message], 404), status: 404
+  rescue ActiveRecord::RecordInvalid => errors
+    render json: error_messages(errors.record.errors.full_messages, 422), status: 422
+  end
   end
 
   def destroy
