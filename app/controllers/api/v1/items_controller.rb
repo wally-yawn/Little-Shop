@@ -14,11 +14,12 @@ class Api::V1::ItemsController < ApplicationController
     item = Item.find(params[:id])
     render json: ItemSerializer.format_single_item(item)
   end
+return_the_merchant_associated_with_an_item
 
   def create
     begin
       item = Item.create!(item_params)
-      render json: ItemSerializer.format_items([item])
+      render json: ItemSerializer.new(item), status: 201
     rescue ActiveRecord::RecordInvalid => errors
       render json: error_messages(errors.record.errors.full_messages, 422), status: 422
     end
@@ -58,6 +59,7 @@ class Api::V1::ItemsController < ApplicationController
     render json: { error: 'Item not found' }, status: :not_found
   end  
 
+
   def error_messages(messages, status)
     {
       message: "your request could not be completed",
@@ -65,5 +67,16 @@ class Api::V1::ItemsController < ApplicationController
       status: status
     }
   end
+return_the_merchant_associated_with_an_item
+  
+  private
+  
+  def not_found_response(exception)
+    render json: ErrorSerializer.format_error(exception, "404"), status: :not_found
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: 'Item not found' }, status: :not_found
+  end  
 
+
+main
 end
