@@ -144,6 +144,7 @@ RSpec.describe "Items API", type: :request do
       expect(InvoiceItem.count).to eq(invoiceItemCount - 2)
     end
   end
+
   describe "sad path test" do
     it "returns an error if the item does not exist" do
       get "/api/v1/items/3231" 
@@ -152,7 +153,6 @@ RSpec.describe "Items API", type: :request do
 
       error_response = JSON.parse(response.body)
       expect(error_response["message"]).to eq("your request could not be completed")
-      
       expect(error_response["errors"].first["title"]).to eq("Couldn't find Item with 'id'=3231")
     end
   end
@@ -160,7 +160,6 @@ RSpec.describe "Items API", type: :request do
   describe "updating an item" do
 
     it 'creates a new item' do
-
       item_attributes = {
           name: "More Cat Things", 
           description: "Stuff to keep cats happy", 
