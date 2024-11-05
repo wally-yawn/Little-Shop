@@ -3,6 +3,7 @@ require "rails_helper"
 RSpec.describe "Merchants API" do
   describe "fetches merchants" do
     before :each do
+      Merchant.destroy_all
       @merchant1 = Merchant.create(name: 'Wally')
       @merchant2 = Merchant.create(name: 'James')
       @merchant3 = Merchant.create(name: 'Natasha')
@@ -114,15 +115,15 @@ RSpec.describe "Merchants API" do
       @merchant2.destroy
 
       get "/api/v1/merchants/#{missing_id}"
-      # binding.pry
       expect(response).to_not be_successful
       expect(response.status).to eq(404)
   
       data = JSON.parse(response.body, symbolize_names: true)
   
       expect(data[:errors]).to be_a(Array)
-      expect(data[:errors].first[:status]).to eq("404")
-      expect(data[:errors].first[:message]).to eq("Couldn't find Merchant with 'id'=#{missing_id}") 
+  
+      expect(data[:message]).to eq("your query could not be completed") 
+      expect(data[:errors].first).to eq("Couldn't find Merchant with 'id'=#{missing_id}") 
     end
 
     it "includes and item count when asked" do

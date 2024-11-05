@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.describe "Items API", type: :model do 
   before(:each) do
     @merchant = Merchant.create(name: "Awesome Merchant") 
+    Item.destroy_all
     @item1 = Item.create(
       name: "Catnip Toy",
       description: "A soft toy filled with catnip.",
