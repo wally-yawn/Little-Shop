@@ -8,8 +8,7 @@ class Merchant < ApplicationRecord
     if params[:sorted] == "age"
       Merchant.all.order(id: :desc)
     elsif params[:status] == "returned"
-      merchants_with_returns = Merchant.joins(:invoices).where("invoice.status = 'returned'")
-      binding.pry
+      Merchant.joins(:invoices).where("invoices.status = 'returned'")
     else
       Merchant.all
     end
