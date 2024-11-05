@@ -35,6 +35,7 @@ RSpec.describe Merchant, type: :model do
   describe "dependent destroy" do
     it "destroys associated items when the merchant is deleted" do
       merchant = Merchant.create!(name: 'Frankenstein')
+      Item.destroy_all
       item1 = merchant.items.create!(name: 'Head bolts', description: 'used as ears and to hold head on', unit_price: 10.99)
       item2 = merchant.items.create!(name: 'Thread', description: 'Used to sew limbs to body', unit_price: 20.99)
       expect(Item.count).to eq(2)
