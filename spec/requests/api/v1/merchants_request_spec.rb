@@ -237,7 +237,7 @@ RSpec.describe "Merchants API" do
       expect(error_response["errors"]).to include("Couldn't find Merchant with 'id'=#{missingMerchant}")
     end
 
-    it "includes and item count when asked" do
+    it "includes an item count when asked" do
       @item1 = Item.create(
       name: "Catnip Toy",
       description: "A soft toy filled with catnip.",
@@ -276,9 +276,43 @@ RSpec.describe "Merchants API" do
       expect(merchants["data"].count).to eq(4)
       merchants["data"].each do |merchant|
         expect(merchant["attributes"]).to have_key("name")
-       
         expect(merchant["attributes"]).to_not have_key("item_count")
       end
+    end
+
+    it "includes invoices based on status when requested" do
+      Invoice.destroy_all
+      customer1 = Customer.create!(first_name: "Wally", last_name: "Wallace")
+      invoice1 = Invoice.create!(customer_id: customer1.id, merchant_id: @merchant1.id, status: "shipped")
+      invoice2 = Invoice.create!(customer_id: customer1.id, merchant_id: @merchant1.id, status: "returned")
+      invoice3 = Invoice.create!(customer_id: customer1.id, merchant_id: @merchant1.id, status: "packaged")
+      invoice4 = Invoice.create!(customer_id: customer1.id, merchant_id: @merchant1.id, status: "returned")
+
+      status = "returned"
+      GET "/api/v1/merchants/#{@merchant1.id}/invoices?status=#{status}"
+      
+      expect(response).to be_successful
+    
+      invoices = JSON.parse(response.body)
+      expect(invoices["data"].count).to eq(2)
+      expect(merchants["data"][0]["id"]).to eq(invoice2.id)
+      expect(merchants["data"][1]["id"]).to eq(invoice4.id)
+    end
+
+    it "includes invoices based on status when requested when there are none" do
+      Invoice.destroy_all
+      customer1 = Customer.create!(first_name: "Wally", last_name: "Wallace")
+      invoice1 = Invoice.create!(customer_id: customer1.id, merchant_id: @merchant1.id, status: "shipped")
+      invoice2 = Invoice.create!(customer_id: customer1.id, merchant_id: @merchant1.id, status: "returned")
+      invoice3 = Invoice.create!(customer_id: customer1.id, merchant_id: @merchant1.id, status: "shipped")
+      invoice4 = Invoice.create!(customer_id: customer1.id, merchant_id: @merchant1.id, status: "returned")
+
+      status = "packaged"
+      GET "/api/v1/merchants/#{@merchant1.id}/invoices?status=#{status}"
+      
+      expect(response).to be_successful
+      invoices = JSON.parse(response.body)
+      expect(merchants["data"].count).to eq(0)
     end
   end
 end
