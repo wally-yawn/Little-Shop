@@ -148,7 +148,10 @@ RSpec.describe "Items API", type: :request do
       expect(InvoiceItem.count).to eq(invoiceItemCount - 2)
     end
   end
+resolve_status_code_post_items
+
  return_the_merchant_associated_with_an_item
+
 
 
   describe "sad path test" do
@@ -159,7 +162,6 @@ RSpec.describe "Items API", type: :request do
 
       error_response = JSON.parse(response.body)
       expect(error_response["message"]).to eq("your request could not be completed")
-      
       expect(error_response["errors"].first["title"]).to eq("Couldn't find Item with 'id'=3231")
     end
   end
@@ -198,7 +200,6 @@ end
   describe "updating an item" do
 
     it 'creates a new item' do
-
       item_attributes = {
           name: "More Cat Things", 
           description: "Stuff to keep cats happy", 

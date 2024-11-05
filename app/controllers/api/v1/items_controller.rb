@@ -19,7 +19,7 @@ return_the_merchant_associated_with_an_item
   def create
     begin
       item = Item.create!(item_params)
-      render json: ItemSerializer.format_items([item])
+      render json: ItemSerializer.new(item), status: 201
     rescue ActiveRecord::RecordInvalid => errors
       render json: error_messages(errors.record.errors.full_messages, 422), status: 422
     end
