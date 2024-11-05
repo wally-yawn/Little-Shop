@@ -35,5 +35,19 @@ RSpec.describe Invoice, type: :model do
         expect(Invoice.by_customer(@customer.id)).to include(@invoice1, @invoice2, @invoice3)
       end
     end
+
+    describe 'filter' do
+      it 'returns filtered based on merchant' do
+        expect(true).to eq(false)
+      end
+
+      it 'returns filtered based on merchant and status' do
+        expect(true).to eq(false)
+      end
+
+      describe 'returns unfiltered when no params are passed in' do
+        Invoice.where(merchant_id: params[:merchant_id]
+      end
+    end
   end
 end

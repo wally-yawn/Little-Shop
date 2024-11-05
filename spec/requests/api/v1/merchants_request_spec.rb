@@ -258,14 +258,13 @@ RSpec.describe "Merchants API" do
         invoice4 = Invoice.create!(customer_id: customer1.id, merchant_id: @merchant1.id, status: "returned")
 
         status = "returned"
-        GET "/api/v1/merchants/#{@merchant1.id}/invoices?status=#{status}"
+        get "/api/v1/merchants/#{@merchant1.id}/invoices?status=#{status}"
         
         expect(response).to be_successful
-      
         invoices = JSON.parse(response.body)
         expect(invoices["data"].count).to eq(2)
-        expect(merchants["data"][0]["id"]).to eq(invoice2.id)
-        expect(merchants["data"][1]["id"]).to eq(invoice4.id)
+        expect(invoices["data"][0]["id"]).to eq(invoice2.id.to_s)
+        expect(invoices["data"][1]["id"]).to eq(invoice4.id.to_s)
       end
 
       it "includes invoices based on status when requested when there are none" do
@@ -277,11 +276,11 @@ RSpec.describe "Merchants API" do
         invoice4 = Invoice.create!(customer_id: customer1.id, merchant_id: @merchant1.id, status: "returned")
 
         status = "packaged"
-        GET "/api/v1/merchants/#{@merchant1.id}/invoices?status=#{status}"
+        get "/api/v1/merchants/#{@merchant1.id}/invoices?status=#{status}"
         
         expect(response).to be_successful
         invoices = JSON.parse(response.body)
-        expect(merchants["data"].count).to eq(0)
+        expect(invoices["data"].count).to eq(0)
       end
     end
   end

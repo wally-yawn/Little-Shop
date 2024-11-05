@@ -8,13 +8,18 @@ class Invoice < ApplicationRecord
 
   validates :merchant, :customer, :status, presence: true
 
+  #TODO - add error handling
   def self.filter(params)
-    #check for by merchant
-    #check for by customer
-    #check status
-
+    if params.include?(:merchant_id)
+      if params.include?(:status)
+        invoices = Invoice.where(merchant_id: params[:merchant_id], status: params[:status])
+      else 
+        invoices = Invoice.where(merchant_id: params[:merchant_id])
+      end
+    else
+      invoices = Invoice.all
+    end
   end
-
 
   def self.by_merchant(merchant_id)
     where(merchant_id: merchant_id)
