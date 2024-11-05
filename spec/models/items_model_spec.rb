@@ -1,6 +1,15 @@
 require 'rails_helper'
 
 RSpec.describe "Items API", type: :model do 
+  describe "relationships" do
+    it { should have_many(:invoice_items)}
+    it { should belongs_to(:merchant)}
+  end
+  
+  describe "validations" do
+    it { should validate_presence_of(:name) }
+  end
+
   before(:each) do
     @merchant = Merchant.create(name: "Awesome Merchant") 
     @item1 = Item.create(
