@@ -3,33 +3,22 @@ require "rails_helper"
 RSpec.describe Merchant, type: :model do
   describe "relationships" do
     it { should have_many(:items)}
+    it { should have_many(:invoices)}
   end
 
   describe "validations" do
     it { should validate_presence_of(:name) }
   end
 
-  before :each do
-    @merchant1 = Merchant.create(name: 'Wally')
-    @merchant2 = Merchant.create(name: 'James')
-    @merchant3 = Merchant.create(name: 'Natasha')
-    @merchant4 = Merchant.create(name: 'Jonathan')
-
-    @item1 = Item.create(
-      name: "Catnip Toy",
-      description: "A soft toy filled with catnip.",
-      unit_price: 12.99,
-      merchant_id: @merchant1.id
-    )
-
-    @item2 = Item.create(
-      name: "Laser Pointer",
-      description: "A laser pointer to keep your cat active.",
-      unit_price: 9.99,
-      merchant_id: @merchant1.id
-    )
-  end
   describe "sort" do
+    before :each do
+      Merchant.destroy_all
+      @merchant1 = Merchant.create(name: 'Wally')
+      @merchant2 = Merchant.create(name: 'James')
+      @merchant3 = Merchant.create(name: 'Natasha')
+      @merchant4 = Merchant.create(name: 'Jonathan')
+    end
+
     it "can sort merchants based on age" do
       merchants = Merchant.sort({sorted: "age"})
 
@@ -47,31 +36,42 @@ RSpec.describe Merchant, type: :model do
   end
 
   describe "dependent destroy" do
-    before :each do
-      Item.destroy_all
-    end
     it "destroys associated items when the merchant is deleted" do
       merchant = Merchant.create!(name: 'Frankenstein')
+      Item.destroy_all
       item1 = merchant.items.create!(name: 'Head bolts', description: 'used as ears and to hold head on', unit_price: 10.99)
       item2 = merchant.items.create!(name: 'Thread', description: 'Used to sew limbs to body', unit_price: 20.99)
       expect(Item.count).to eq(2)
-      
       merchant.destroy
       expect(Item.count).to eq(0)
     end
   end
 
-  describe "queried" do
-    it "returns merchants with item count when count param is 'true'" do
-      merchants = Merchant.queried({ count: 'true' })
-      merchant_with_items = merchants.find_by(id: @merchant1.id)
-      
-      expect(merchant_with_items.item_count).to eq(2)
+  describe "self.getMerchant" do
+    before :each do
+      @merchant1 = Merchant.create(name: 'Wally')
+      @item1 = Item.create(
+        name: "Catnip Toy",
+        description: "A soft toy filled with catnip.",
+        unit_price: 12.99,
+        merchant_id: @merchant1.id
+      )
     end
 
-    it "does not include item count when count param is not present" do
-      merchants = Merchant.queried({})
-      expect(merchants.first).to_not respond_to(:item_count)
+    it 'gets merchant if merchant_id is passed as param' do
+      expect(Merchant.getMerchant({id: "#{@merchant1.id}"})).to eq(@merchant1)
+    end
+
+    it "gets merchant if item_id is passed as param" do
+      expect(Merchant.getMerchant({item_id: "#{@item1.id}"})).to eq(@merchant1)
+    end
+
+    it "returns an error if item_id is passed as param but does not exist" do
+      itemId = @item1.id
+      @item1.destroy
+      response = Merchant.getMerchant({item_id: "#{itemId}"})
+      
+      expect(response).to eq("Couldn't find Item with 'id'=#{itemId}")
     end
   end
 end

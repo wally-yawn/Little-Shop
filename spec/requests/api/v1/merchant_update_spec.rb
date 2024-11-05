@@ -1,14 +1,16 @@
 require 'rails_helper'
 
 RSpec.describe "merchants update action" do
-  describe "happy path test" do  
-    before :each do
-      @merchant1 = Merchant.create(name: 'Wally')
-      @merchant2 = Merchant.create(name: 'James')
-      @merchant3 = Merchant.create(name: 'Natasha')
-      @merchant4 = Merchant.create(name: 'Jonathan')
-    end
-    
+  
+  before :each do
+    Merchant.destroy_all
+    @merchant1 = Merchant.create(name: 'Wally')
+    @merchant2 = Merchant.create(name: 'James')
+    @merchant3 = Merchant.create(name: 'Natasha')
+    @merchant4 = Merchant.create(name: 'Jonathan')
+  end
+
+  describe "happy path test" do    
     it "can update a merchant" do
       current_name = @merchant4.name
       updated_name = { name: 'Sweep the leg, Johnny' }

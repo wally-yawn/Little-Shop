@@ -1,5 +1,7 @@
 class ItemSerializer
-
+    include JSONAPI::Serializer 
+    attributes :name, :description, :unit_price, :merchant_id
+    
     def self.format_items(items)
         { data: items.map { |item| formatted_item(item) }}
     end
@@ -20,4 +22,4 @@ class ItemSerializer
             }
         }
     end
-  end
+end

@@ -1,9 +1,12 @@
 class Item < ApplicationRecord
-  has_many :invoice_items
+  validates :name, presence: true
+  validates :description, presence: true
+  validates :unit_price, presence: true
+  validates :merchant_id, presence: true
+  has_many :invoice_items, dependent: :destroy
   belongs_to :merchant
 
   def self.getItems(params = {})
-    #change this to a generic method that uses some if logic to call helper methods
     if params[:sorted] == 'price'
       Item.all.order(:unit_price)
     elsif params.key?(:id)
