@@ -104,4 +104,24 @@ RSpec.describe Merchant, type: :model do
       expect(merchant).to be_a(Hash)
     end
   end
+
+  describe '.queried' do
+    before :each do
+      @merchant1 = Merchant.create(name: 'Wally')
+      @merchant2 = Merchant.create(name: 'Natasha')
+      @item1 = Item.create(
+        name: "Catnip Toy",
+        description: "A soft toy filled with catnip.",
+        unit_price: 12.99,
+        merchant_id: @merchant1.id
+      )
+    end
+
+    it 'returns merchants with item count when count parameter is true' do
+      merchants = Merchant.queried({ count: 'true' })
+
+      expect(merchants.first.item_count).to eq(1) 
+      expect(merchants.find_by(id: @merchant2.id).item_count).to eq(0)
+    end
+  end
 end
