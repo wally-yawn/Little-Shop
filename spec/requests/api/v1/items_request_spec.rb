@@ -76,6 +76,24 @@ RSpec.describe "Items API", type: :request do
     expect(attrs[:merchant_id]).to eq(@item1.merchant_id)
   end
 
+  it 'returns an error if item is not found' do
+    missing_id = @item2.id
+        @item2.destroy
+
+        get "/api/v1/items/#{missing_id}"
+        expect(response).to_not be_successful
+        expect(response.status).to eq(404)
+    
+        data = JSON.parse(response.body, symbolize_names: true)
+       #binding.pry
+        expect(data[:message]).to eq("your request could not be completed") 
+        expect(data[:errors]).to be_a(Array)
+    
+        error = data[:errors].first
+        expect(error[:status]).to eq("404")
+        expect(error[:title]).to eq("Couldn't find Item with 'id'=#{missing_id}") 
+  end
+
   it 'can sort items by price' do
     get '/api/v1/items', params: { sorted: 'price' }
     expect(response).to be_successful
