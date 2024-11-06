@@ -86,4 +86,42 @@ RSpec.describe Item, type: :model do
     @item1.destroy
     expect(InvoiceItem.count).to eq(0)
   end
+
+  describe 'find_all' do
+    it 'can find all items that match a name search query' do
+      items = Item.find_all({ name: 'cat' })
+
+      expect(items.size).to eq(1)
+      expect(items[0].name.downcase).to include("cat")
+    end
+
+    it 'returns an empty array when no items match the search query' do
+      items = Item.find_all({ name: 'nonexistent' })
+      expect(items).to eq([])
+    end
+
+    it 'can fetch all items that match a min price search query' do
+      items = Item.find_all({ min_price: 10 })
+
+      expect(items[0][:id]).to eq(@item1.id)
+      expect(items[1][:id]).to eq(@item3.id)
+    end
+
+    it 'can fetch all items that match a max price search query' do
+      items = Item.find_all({ max_price: 13 })
+
+      expect(items[0][:id]).to eq(@item1.id)
+      expect(items[1][:id]).to eq(@item2.id)
+    end
+
+    it 'can fetch all items that match a min and max price search query' do
+      items = Item.find_all({ min_price: 10, max_price: 13 })
+
+      expect(items[0][:id]).to eq(@item1.id)
+    end
+
+    it 'returns an error if both price and name are passed in' do
+      expect(true).to eq(false)
+    end
+  end
 end

@@ -22,7 +22,6 @@ class Item < ApplicationRecord
   end
 
   def self.find_all(params = {})
-  # binding.pry
   #potentially for error
     #render json: ErrorSerializer.format_error(exception, "404"), status: :not_found
     if params.has_key?(:name)
