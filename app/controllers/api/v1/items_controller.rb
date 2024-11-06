@@ -18,7 +18,7 @@ class Api::V1::ItemsController < ApplicationController
   def create
     begin
       item = Item.create!(item_params)
-      render json: ItemSerializer.format_items(item), status: 201
+      render json: ItemSerializer.format_single_item(item), status: 201
     rescue ActiveRecord::RecordInvalid => errors
       render json: error_messages(errors.record.errors.full_messages, 422), status: 422
     end
@@ -49,7 +49,7 @@ class Api::V1::ItemsController < ApplicationController
   private
 
   def item_params
-    params.require(:item).permit(:name, :description, :unit_price, :merchant_id)
+    params.permit(:name, :description, :unit_price, :merchant_id)
   end
   
   def not_found_response(exception)

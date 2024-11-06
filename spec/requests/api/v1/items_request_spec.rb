@@ -149,7 +149,24 @@ RSpec.describe "Items API", type: :request do
     end
   end
 
+  describe 'it can create an item' do
+    it 'can create a valid item' do
+      item_params = { name: 'New Item', description: 'I am a fun item', unit_price: 12.99, merchant_id: @merchant.id}
+      post '/api/v1/items', params: item_params
 
+      expect(response).to be_successful
+
+      item_response = JSON.parse(response.body)
+
+      expect(item_response).to have_key("data")
+      expect(item_response["data"]["id"]).to be_present
+      expect(item_response["data"]["type"]).to eq("item")
+      expect(item_response["data"]["attributes"]["name"]).to eq("New Item")
+      expect(item_response["data"]["attributes"]["description"]).to eq("I am a fun item")
+      expect(item_response["data"]["attributes"]["unit_price"]).to eq(12.99)
+      expect(item_response["data"]["attributes"]["merchant_id"]).to eq(@merchant.id)
+    end
+  end
 
   describe "sad path test" do
     it "returns an error if the item does not exist" do
