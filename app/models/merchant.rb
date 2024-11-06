@@ -2,6 +2,7 @@ class Merchant < ApplicationRecord
   validates :name, presence: true
   has_many :invoices, dependent: :destroy
   has_many :items, dependent: :destroy
+  has_many :customers
 
   def self.queried(params)
     merchants = Merchant.all
@@ -9,7 +10,6 @@ class Merchant < ApplicationRecord
     merchants = params[:count] == 'true' ? Merchant.with_item_count : merchants
     merchants
   end
-  has_many :customers
 
   def self.sort(params)
     if params[:sorted] == "age"

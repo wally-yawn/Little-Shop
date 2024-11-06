@@ -25,16 +25,18 @@ class Invoice < ApplicationRecord
     where(customer_id: customer_id)
   end
 
-  def self.valid_merchant?(merchant_id)
-    Merchant.exists?(merchant_id)
-  end
+  # def self.valid_merchant?(merchant_id)
+  #   Merchant.exists?(merchant_id)
+  # end
 
-  def valid_invoice?
-    valid? 
-  end
+  # def valid_invoice?
+  #   valid? 
+  # end
 
-  private
+private
+
   def set_default_status
     self.status ||= 'pending'
   end
+  
 end

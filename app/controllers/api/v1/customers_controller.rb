@@ -12,11 +12,6 @@ class Api::V1::CustomersController < ApplicationController
     render json: CustomerSerializer.format_customer(customer)
   end
 
-  def create 
-    customer = Customer.create(customer_params)
-    render json: CustomerSerializer.format_customers([customer])
-  end
-
   private 
   def not_found_response
     render json: { message: "Resource not found" }, status: :not_found
