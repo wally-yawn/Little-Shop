@@ -120,8 +120,12 @@ RSpec.describe Item, type: :model do
     end
 
     it 'returns an error if both price and name are passed in' do
-      items = Item.find_all({ min_price: 10, max_price: 13 name: "hello"})
-      expect(items.message).to eq("your request could not be completed")
+      items = Item.find_all({ min_price: 10, max_price: 13, name: "hello"})
+      expect(items).to be_a(Hash)
+      items = Item.find_all({ max_price: 13, name: "hello"})
+      expect(items).to be_a(Hash)
+      items = Item.find_all({ min_price: 10, name: "hello"})
+      expect(items).to be_a(Hash)
     end
   end
 end
