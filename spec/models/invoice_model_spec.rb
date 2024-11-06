@@ -54,10 +54,6 @@ RSpec.describe Invoice, type: :model do
         invoices = Invoice.filter({merchant_id: other_merchant2.id})
         expect(invoices).to eq([])
       end
-
-      xit 'returns an error when the merchant does not exist' do
-        expect(true).to eq(false)
-      end
     end
   end
 end

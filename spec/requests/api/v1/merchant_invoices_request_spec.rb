@@ -31,12 +31,15 @@ RSpec.describe 'Invoices API', type: :request do
     expect(invoices).to eq([]) 
   end
 
-  xit 'returns a 404 error if the merchant does not exist' do
-    get "/api/v1/merchants/999/invoices"
+  it 'returns a 404 error if the merchant does not exist' do
+    merchant_id = @merchant.id
+    Merchant.destroy_all
 
-    expect(response).to have_http_status(:not_found)
+    get "/api/v1/merchants/#{merchant_id}/invoices"
+
+    expect(response).to have_http_status(404)
     error_response = JSON.parse(response.body, symbolize_names: true)
-    expect(error_response).to have_key(:error)
-    expect(error_response[:error]).to eq("Merchant not found")
+    expect(error_response).to have_key(:errors)
+    expect(error_response[:errors].first[:title]).to eq("Couldn't find Merchant with 'id'=#{merchant_id}")
   end
 end
