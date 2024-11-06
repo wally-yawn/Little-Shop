@@ -48,7 +48,19 @@ class Api::V1::ItemsController < ApplicationController
 
   def find_all
     items = Item.find_all(params)
-    render json: ItemSerializer.format_items(items)
+    if items.is_a?(Hash)
+      render json: {
+        message: "your request could not be completed",
+        errors: [
+          {
+            status: "405",
+            title: "you can't ask for both"
+          }
+        ]
+      }, status: 405
+    else 
+      render json: ItemSerializer.format_items(items)
+    end
   end
   
   private

@@ -323,7 +323,17 @@ RSpec.describe "Items API", type: :request do
     end
 
     it 'returns an error if both price and name are passed in' do
-      expect(true).to eq(false)
+      get '/api/v1/items/find_all?name=cat&min_price=10&max_price=13'
+      expect(response).to_not be_successful
+      expect(response.status).to eq(405)
+
+      get '/api/v1/items/find_all?name=cat&&max_price=13'
+      expect(response).to_not be_successful
+      expect(response.status).to eq(405)
+
+      get '/api/v1/items/find_all?name=cat&min_price=10'
+      expect(response).to_not be_successful
+      expect(response.status).to eq(405)
     end
   end
 end
