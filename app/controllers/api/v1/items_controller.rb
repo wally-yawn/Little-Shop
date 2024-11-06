@@ -17,6 +17,7 @@ class Api::V1::ItemsController < ApplicationController
 
   def create
     begin
+      
       item = Item.create!(item_params)
       render json: ItemSerializer.format_single_item(item), status: 201
     rescue ActiveRecord::RecordInvalid => errors
