@@ -231,9 +231,10 @@ RSpec.describe "Items API", type: :request do
         unit_price: 30.00, 
         merchant_id: @merchant.id)
       previous_name = item.name
+      
       item_params = { name: "Padam litter", description: "Cat litter made out of tofu", unit_price: 28.99 }
 
-      patch "/api/v1/items/#{item.id}", {item: item_params}
+      patch "/api/v1/items/#{item.id}", params: { item: item_params }
       item = Item.find_by(id: item.id)
 
       expect(response).to be_successful
