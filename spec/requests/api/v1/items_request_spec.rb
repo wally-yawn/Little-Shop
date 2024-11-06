@@ -152,7 +152,7 @@ RSpec.describe "Items API", type: :request do
   describe 'it can create an item' do
     it 'can create a valid item' do
       item_params = { name: 'New Item', description: 'I am a fun item', unit_price: 12.99, merchant_id: @merchant.id}
-      post '/api/v1/items', params: item_params
+      post '/api/v1/items', params: {item: item_params}
 
       expect(response).to be_successful
 
@@ -233,7 +233,7 @@ RSpec.describe "Items API", type: :request do
       previous_name = item.name
       item_params = { name: "Padam litter", description: "Cat litter made out of tofu", unit_price: 28.99 }
 
-      patch "/api/v1/items/#{item.id}", params: item_params
+      patch "/api/v1/items/#{item.id}", {item: item_params}
       item = Item.find_by(id: item.id)
 
       expect(response).to be_successful
