@@ -20,4 +20,11 @@ class Item < ApplicationRecord
       Item.all
     end
   end
+
+  def self.find_all(params = {})
+  binding.pry
+    if params.has_key?[:name]
+      items = Item.where('name ILIKE ?', "%#{params[:name]}%") 
+    end
+  end
 end

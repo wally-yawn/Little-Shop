@@ -17,7 +17,6 @@ class Api::V1::ItemsController < ApplicationController
 
   def create
     begin
-      # binding.pry
       item = Item.create!(item_params)
       render json: ItemSerializer.format_single_item(item), status: 201
     rescue ActiveRecord::RecordInvalid => errors
@@ -48,16 +47,14 @@ class Api::V1::ItemsController < ApplicationController
   end
 
   def find_all
-  
-    items = Item.where('name ILIKE ?', "%#{params[:name]}%") 
+    items = Item.find_all(params)
     render json: ItemSerializer.format_items(items)
   end
-
   
   private
 
   def item_params
-    # params.permit(:name, :description, :unit_price, :merchant_id)
+
     params.require(:item).permit(:name, :description, :unit_price, :merchant_id)
   end
   

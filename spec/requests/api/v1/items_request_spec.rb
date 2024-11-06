@@ -259,31 +259,65 @@ RSpec.describe "Items API", type: :request do
     end
   end
 
-  it 'can fetch all items that match a search query' do
-    get '/api/v1/items/find_all?name=cat'
+  describe 'find_all' do
+    it 'can fetch all items that match a name search query' do
+      get '/api/v1/items/find_all?name=cat'
 
-    expect(response).to be_successful
-    expect(response.status).to eq(200)
+      expect(response).to be_successful
+      expect(response.status).to eq(200)
 
-    items = JSON.parse(response.body, symbolize_names: true)[:data]
-    expect(items).to be_an(Array)
-    expect(items.size).to eq(1)
+      items = JSON.parse(response.body, symbolize_names: true)[:data]
+      expect(items).to be_an(Array)
+      expect(items.size).to eq(1)
 
-    item_names = items.map { |item| item[:attributes][:name] }
-    # expect(item_names).to include("cat")
-    item_names.each do |item_name|
+      item_names = items.map { |item| item[:attributes][:name] }
+      item_names.each do |item_name|
       expect(item_name.downcase).to include("cat")
+      end
     end
-  end
 
-  it 'returns an empty array when no items match the search query' do
-    get '/api/v1/items/find_all?name=nonexistent'
+    it 'returns an empty array when no items match the search query' do
+      get '/api/v1/items/find_all?name=nonexistent'
 
-    expect(response).to be_successful
-    expect(response.status).to eq(200)
+      expect(response).to be_successful
+      expect(response.status).to eq(200)
 
-    items = JSON.parse(response.body, symbolize_names: true)[:data]
-    expect(items).to eq([])
+      items = JSON.parse(response.body, symbolize_names: true)[:data]
+      expect(items).to eq([])
+    end
+
+    it 'can fetch all items that match a min price search query' do
+      get '/api/v1/items/find_all?min_price=10'
+
+      expect(response).to be_successful
+      expect(response.status).to eq(200)
+
+      items = JSON.parse(response.body, symbolize_names: true)[:data]
+      expect(items).to be_an(Array)
+      expect(items).to eq([@item1, @item3])
+    end
+
+    it 'can fetch all items that match a max price search query' do
+      get '/api/v1/items/find_all?max_price=13'
+
+      expect(response).to be_successful
+      expect(response.status).to eq(200)
+
+      items = JSON.parse(response.body, symbolize_names: true)[:data]
+      expect(items).to be_an(Array)
+      expect(items).to eq([@item1, @item2])
+    end
+
+    it 'can fetch all items that match a min and max price search query' do
+      get '/api/v1/items/find_all?min_price=10&max_price=13'
+
+      expect(response).to be_successful
+      expect(response.status).to eq(200)
+
+      items = JSON.parse(response.body, symbolize_names: true)[:data]
+      expect(items).to be_an(Array)
+      expect(items).to eq([@item1])
+    end
   end
 end
 
