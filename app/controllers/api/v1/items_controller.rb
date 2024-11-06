@@ -1,5 +1,7 @@
 class Api::V1::ItemsController < ApplicationController
   rescue_from ActiveRecord::RecordNotFound, with: :not_found_response
+  rescue_from ActiveRecord::RecordInvalid, with: :invalid_record_response
+
 
   def index
     items = Item.getItems(params)
@@ -16,33 +18,35 @@ class Api::V1::ItemsController < ApplicationController
   end
 
   def create
-    begin
       item = Item.create!(item_params)
-      render json: ItemSerializer.format_items([item]), status: 201
-    rescue ActiveRecord::RecordInvalid => errors
-      render json: error_messages(errors.record.errors.full_messages, 422), status: 422
-    end
+      render json: ItemSerializer.format_single_item(item), status: 201
   end
 
   def update
-    begin
     item = Item.find(params[:id])
     item.update!(item_params)
-
     render json: ItemSerializer.format_single_item(item)
-  rescue ActiveRecord::RecordNotFound => error
-    render json: error_messages([error.message], 404), status: 404
-  rescue ActiveRecord::RecordInvalid => errors
-    render json: error_messages(errors.record.errors.full_messages, 422), status: 422
-  end
   end
 
   def destroy
-    begin
       item = Item.find(params[:id])
       item.destroy
-    rescue ActiveRecord::RecordNotFound => error
-      render json: {"message": "your query could not be completed", "errors": ["#{error}"]}, status: 404
+  end
+
+  def find_all
+    items = Item.find_all(params)
+    if items.is_a?(Hash)
+      render json: {
+        message: "your request could not be completed",
+        errors: [
+          {
+            status: "405",
+            title: "you can't ask for both"
+          }
+        ]
+      }, status: 405
+    else 
+      render json: ItemSerializer.format_items(items)
     end
   end
   
@@ -54,10 +58,11 @@ class Api::V1::ItemsController < ApplicationController
   
   def not_found_response(exception)
     render json: ErrorSerializer.format_error(exception, "404"), status: :not_found
-  rescue ActiveRecord::RecordNotFound
-    render json: { error: 'Item not found' }, status: :not_found
   end  
 
+  def invalid_record_response(exception)
+    render json: error_messages([exception.message], 422), status: 422
+  end
 
   def error_messages(messages, status)
     {
