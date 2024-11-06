@@ -18,7 +18,7 @@ class Api::V1::ItemsController < ApplicationController
   def create
     begin
       item = Item.create!(item_params)
-      render json: ItemSerializer.format_items(item), status: 201
+      render json: ItemSerializer.format_single_item(item), status: 201
     rescue ActiveRecord::RecordInvalid => errors
       render json: error_messages(errors.record.errors.full_messages, 422), status: 422
     end
@@ -45,6 +45,13 @@ class Api::V1::ItemsController < ApplicationController
       render json: {"message": "your query could not be completed", "errors": ["#{error}"]}, status: 404
     end
   end
+
+  def find_all
+  
+    items = Item.where('name ILIKE ?', "%#{params[:name]}%") 
+    render json: ItemSerializer.format_items(items)
+  end
+
   
   private
 
