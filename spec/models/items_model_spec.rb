@@ -116,12 +116,12 @@ RSpec.describe Item, type: :model do
 
     it 'can fetch all items that match a min and max price search query' do
       items = Item.find_all({ min_price: 10, max_price: 13 })
-
       expect(items[0][:id]).to eq(@item1.id)
     end
 
     it 'returns an error if both price and name are passed in' do
-      expect(true).to eq(false)
+      items = Item.find_all({ min_price: 10, max_price: 13 name: "hello"})
+      expect(items.message).to eq("your request could not be completed")
     end
   end
 end
