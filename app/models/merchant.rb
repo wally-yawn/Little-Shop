@@ -46,7 +46,8 @@ class Merchant < ApplicationRecord
 
   def self.find_by_params(params) #is this redundant with self.getMerchant? Not at 2:48am it isn't but something to look at refactoring
     if params.has_key?(:name) && params[:name].present?
-      merchant = Merchant.where('name ILIKE ?', "%#{params[:name]}%").limit(1)
+      merchant = Merchant.where('name ILIKE ?', "%#{params[:name]}%").first
+      merchant || { error: { message: "No merchant found", status: 404 } }
     else
       { error: { message: "you need to specify a name", status: 404 } }
     end

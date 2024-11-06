@@ -291,7 +291,7 @@ RSpec.describe "Merchants API" do
         expect(response).to be_successful
 
         merchant = JSON.parse(response.body, symbolize_names: true)[:data]
-        expect(merchant[0][:id]).to eq(@merchant3.id.to_s)
+        expect(merchant).to eq(@merchant3.id.to_s)
       end
 
       it 'does not error when there are no matching merchants' do
