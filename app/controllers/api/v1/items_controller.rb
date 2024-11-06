@@ -45,6 +45,13 @@ class Api::V1::ItemsController < ApplicationController
       render json: {"message": "your query could not be completed", "errors": ["#{error}"]}, status: 404
     end
   end
+
+  def find_all
+  
+    items = Item.where('name ILIKE ?', "%#{params[:name]}%") 
+    render json: ItemSerializer.format_items(items)
+  end
+
   
   private
 

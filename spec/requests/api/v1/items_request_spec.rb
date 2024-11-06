@@ -218,12 +218,22 @@ RSpec.describe "Items API", type: :request do
           unit_price: 30.00, 
           merchant_id: @merchant.id
           }
+<<<<<<< HEAD
       post '/api/v1/items', params: { item: item_attributes }
 
       item = JSON.parse(response.body, symbolize_names: true)[:data].first   
       expect(item[:attributes][:name]).to eq(item_attributes[:name])
       expect(item[:attributes][:description]).to eq(item_attributes[:description])
       expect(item[:attributes][:unit_price]).to eq(item_attributes[:unit_price])
+=======
+      post '/api/v1/items#create', params: { item: item_attributes }
+        
+      item = JSON.parse(response.body, symbolize_names: true)
+        binding.pry
+      expect(item[:data][:attributes][:name]).to eq(item_attributes[:name])
+      expect(item[:data][:attributes][:description]).to eq(item_attributes[:description])
+      expect(item[:data][:attributes][:unit_price]).to eq(item_attributes[:unit_price])
+>>>>>>> 3eb17799a7c279f25b9d0ca0969c42a89d3f0f2f
     end
 
 
@@ -242,7 +252,7 @@ RSpec.describe "Items API", type: :request do
   
 
     it "can update an existing item" do
-      id = Item.create(
+      id = Item.create!(
         name: "More Cat Things", 
         description: "Stuff to keep cats happy", 
         unit_price: 30.00, 
@@ -289,6 +299,34 @@ RSpec.describe "Items API", type: :request do
       expect(error_response["errors"]).to include("Name can't be blank")
     end
   end
+
+  it 'can fetch all items that match a search query' do
+    get '/api/v1/items/find_all?name=cat'
+
+    expect(response).to be_successful
+    expect(response.status).to eq(200)
+
+    items = JSON.parse(response.body, symbolize_names: true)[:data]
+    expect(items).to be_an(Array)
+    expect(items.size).to eq(1)
+
+    item_names = items.map { |item| item[:attributes][:name] }
+    # expect(item_names).to include("cat")
+    item_names.each do |item_name|
+      expect(item_name.downcase).to include("cat")
+    end
+  end
+
+  it 'returns an empty array when no items match the search query' do
+    get '/api/v1/items/find_all?name=nonexistent'
+
+    expect(response).to be_successful
+    expect(response.status).to eq(200)
+
+    items = JSON.parse(response.body, symbolize_names: true)[:data]
+    expect(items).to eq([])
+  end
 end
+
 
 
