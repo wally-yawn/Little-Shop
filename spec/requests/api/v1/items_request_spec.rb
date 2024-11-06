@@ -343,15 +343,25 @@ RSpec.describe "Items API", type: :request do
     it 'returns an error if both price and name are passed in' do
       get '/api/v1/items/find_all?name=cat&min_price=10&max_price=13'
       expect(response).to_not be_successful
-      expect(response.status).to eq(405)
+      expect(response.status).to eq(400)
 
       get '/api/v1/items/find_all?name=cat&&max_price=13'
       expect(response).to_not be_successful
-      expect(response.status).to eq(405)
+      expect(response.status).to eq(400)
 
       get '/api/v1/items/find_all?name=cat&min_price=10'
       expect(response).to_not be_successful
-      expect(response.status).to eq(405)
+      expect(response.status).to eq(400)
+    end
+
+    it 'returns an error if min_price or max_price < 0' do
+      get '/api/v1/items/find_all?name=cat&&max_price=-13'
+      expect(response).to_not be_successful
+      expect(response.status).to eq(400)
+
+      get '/api/v1/items/find_all?name=cat&min_price=-10'
+      expect(response).to_not be_successful
+      expect(response.status).to eq(400)
     end
   end
 end

@@ -34,19 +34,31 @@ class Api::V1::ItemsController < ApplicationController
   end
 
   def find_all
-    items = Item.find_all(params)
-    if items.is_a?(Hash)
-      render json: {
+    if (params[:min_price].to_f < 0 || params[:max_price].to_f < 0)
+    render json: {
         message: "your request could not be completed",
         errors: [
           {
-            status: "405",
-            title: "you can't ask for both"
+            status: "400",
+            title: "min_price or max_price < 0"
           }
         ]
-      }, status: 405
-    else 
-      render json: ItemSerializer.format_items(items)
+      }, status: 400
+    else
+      items = Item.find_all(params)
+      if items.is_a?(Hash)
+        render json: {
+          message: "your request could not be completed",
+          errors: [
+            {
+              status: "400",
+              title: "you can't ask for both"
+            }
+          ]
+        }, status: 400
+      else 
+        render json: ItemSerializer.format_items(items)
+      end
     end
   end
   
