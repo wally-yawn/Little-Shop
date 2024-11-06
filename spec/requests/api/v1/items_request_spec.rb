@@ -129,8 +129,8 @@ RSpec.describe "Items API", type: :request do
       expect(response.status).to eq(404)
 
       error_response = JSON.parse(response.body)
-      expect(error_response["message"]).to eq("your query could not be completed")
-      expect(error_response["errors"]).to include("Couldn't find Item with 'id'=#{item1Id}")
+      expect(error_response["message"]).to eq("your request could not be completed")
+      expect(error_response["errors"].first["title"]).to include("Couldn't find Item with 'id'=#{item1Id}")
     end
 
     it 'deletes all associated invoice items when it deletes a single item' do
@@ -220,7 +220,7 @@ RSpec.describe "Items API", type: :request do
 
       error_response = JSON.parse(response.body)
       expect(error_response["message"]).to eq("your request could not be completed")
-      expect(error_response["errors"]).to include("Name can't be blank")
+      expect(error_response["errors"]).to include("Validation failed: Name can't be blank, Unit price can't be blank")
     end
   
 
@@ -255,7 +255,7 @@ RSpec.describe "Items API", type: :request do
 
       error_response = JSON.parse(response.body)
       expect(error_response["message"]).to eq("your request could not be completed")
-      expect(error_response["errors"]).to include("Couldn't find Item with 'id'=#{no_item}")
+      expect(error_response["errors"].first["title"]).to include("Couldn't find Item with 'id'=#{no_item}")
     end
   end
 
