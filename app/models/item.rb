@@ -22,9 +22,17 @@ class Item < ApplicationRecord
   end
 
   def self.find_all(params = {})
-  binding.pry
-    if params.has_key?[:name]
+  # binding.pry
+  #potentially for error
+    #render json: ErrorSerializer.format_error(exception, "404"), status: :not_found
+    if params.has_key?(:name)
       items = Item.where('name ILIKE ?', "%#{params[:name]}%") 
+    elsif params.has_key?(:max_price) && params.has_key?(:min_price)
+      items = Item.where("unit_price between ? and ?", params[:min_price], params[:max_price])
+    elsif params.has_key?(:min_price)
+      items = Item.where("unit_price > ?", params[:min_price])
+    elsif params.has_key?(:max_price)
+      items = Item.where("unit_price < ?", params[:max_price])
     end
   end
 end

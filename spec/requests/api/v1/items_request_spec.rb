@@ -293,8 +293,10 @@ RSpec.describe "Items API", type: :request do
       expect(response.status).to eq(200)
 
       items = JSON.parse(response.body, symbolize_names: true)[:data]
+
       expect(items).to be_an(Array)
-      expect(items).to eq([@item1, @item3])
+      expect(items[0][:id]).to eq(@item1.id.to_s)
+      expect(items[1][:id]).to eq(@item3.id.to_s)
     end
 
     it 'can fetch all items that match a max price search query' do
@@ -305,7 +307,8 @@ RSpec.describe "Items API", type: :request do
 
       items = JSON.parse(response.body, symbolize_names: true)[:data]
       expect(items).to be_an(Array)
-      expect(items).to eq([@item1, @item2])
+      expect(items[0][:id]).to eq(@item1.id.to_s)
+      expect(items[1][:id]).to eq(@item2.id.to_s)
     end
 
     it 'can fetch all items that match a min and max price search query' do
@@ -316,7 +319,11 @@ RSpec.describe "Items API", type: :request do
 
       items = JSON.parse(response.body, symbolize_names: true)[:data]
       expect(items).to be_an(Array)
-      expect(items).to eq([@item1])
+      expect(items[0][:id]).to eq(@item1.id.to_s)
+    end
+
+    it 'returns an error if both price and name are passed in' do
+      expect(true).to eq(false)
     end
   end
 end
