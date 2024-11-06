@@ -10,34 +10,19 @@ Rails.application.routes.draw do
 
   get '/api/v1/items',     to: 'api/v1/items#index'
   get '/api/v1/items/:id', to: 'api/v1/items#show'
-
   post '/api/v1/items', to: 'api/v1/items#create'
   patch '/api/v1/items/:id', to: 'api/v1/items#update'
-
-
   get "/api/v1/merchants", to: "api/v1/merchants#index"
   post "/api/v1/merchants", to: "api/v1/merchants#create"
   get "/api/v1/merchants/:id", to: "api/v1/merchants#show"
   patch "/api/v1/merchants/:id", to: "api/v1/merchants#update"
   delete "/api/v1/merchants/:id", to: "api/v1/merchants#destroy"
-
-
-
-  delete "/api/v1/merchants/:id", to: "api/v1/merchants#destroy"
-
-
-
   get '/api/v1/merchants/:merchant_id/customers', to: 'api/v1/customers#index'
   get '/api/v1/merchants/:merchant_id/customers/:id', to: 'api/v1/customers#show'
-
   get '/api/v1/merchants/:merchant_id/invoices', to: 'api/v1/invoices#index'
-  post '/api/v1/merchants/:merchant_id/invoices', to: 'api/v1/invoices#create'
   get '/api/v1/invoices/:id', to: 'api/v1/invoices#show'  
   get "/api/v1/customers/:customer_id/invoices", to: 'api/v1/invoices#index'
   get "/api/v1/merchants/:id/items", to: 'api/v1/items#index'
   get '/api/v1/items/:item_id/merchant', to: "api/v1/merchants#show"
-  
-
   delete '/api/v1/items/:id', to: 'api/v1/items#destroy'
-
 end
