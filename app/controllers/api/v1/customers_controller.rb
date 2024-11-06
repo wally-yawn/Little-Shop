@@ -2,11 +2,7 @@ class Api::V1::CustomersController < ApplicationController
   def index
     merchant = Merchant.find(params[:merchant_id])
     invoices = Invoice.where(merchant_id: merchant.id)
-    customers = []
-    invoices.each do |invoice|
-      customer = invoice.customer
-      customers << customer
-    end
+    customers = invoices.map(&:customer).uniq
     render json: CustomerSerializer.format_customers(customers)
   end
         
