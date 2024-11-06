@@ -39,10 +39,16 @@ class Merchant < ApplicationRecord
   end
 
   def self.with_item_count
-      select("merchants.*, COUNT(items.id) AS item_count")
-        .left_joins(:items)
-        .group("merchants.id")
-        
+    select("merchants.*, COUNT(items.id) AS item_count")
+      .left_joins(:items)
+      .group("merchants.id")
+  end
+
+  def self.find_by_params(params) #is this redundant with self.getMerchant? Not at 2:48am it isn't but something to look at refactoring
+    if params.has_key?(:name) && params[:name].present?
+      merchant = Merchant.where('name ILIKE ?', "%#{params[:name]}%").limit(1)
+    else
+      { error: { message: "you need to specify a name", status: 404 } }
+    end
   end
 end
-

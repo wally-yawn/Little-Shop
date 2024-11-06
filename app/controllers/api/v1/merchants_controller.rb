@@ -49,6 +49,15 @@ class Api::V1::MerchantsController < ApplicationController
     end
   end
 
+  def find
+    merchant = Merchant.find_by_params(params)
+    if merchant.is_a?(Hash)
+      render json: {"message": "your query could not be completed", "errors": ["#{merchant}"]}, status: 404
+    else
+      render json: MerchantSerializer.new(merchant)
+    end
+  end
+
   private
 
   def merchant_params
