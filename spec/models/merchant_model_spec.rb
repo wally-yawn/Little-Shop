@@ -74,4 +74,19 @@ RSpec.describe Merchant, type: :model do
       expect(response).to eq("Couldn't find Item with 'id'=#{itemId}")
     end
   end
+
+  describe 'find' do
+    it 'finds the first matching merchant by name (case insensitive)' do
+      expect(true).to eq(false)
+    end
+    it 'does not error when there are no matching merchants' do
+      expect(true).to eq(false)
+    end
+    it 'errors when a parameter is missing' do
+      expect(true).to eq(false)
+    end
+    it 'errors when a parameter is empty' do
+      expect(true).to eq(false)
+    end
+  end
 end
