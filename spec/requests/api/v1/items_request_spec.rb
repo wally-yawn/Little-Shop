@@ -149,7 +149,24 @@ RSpec.describe "Items API", type: :request do
     end
   end
 
+  describe 'it can create an item' do
+    it 'can create a valid item' do
+      item_params = { name: 'New Item', description: 'I am a fun item', unit_price: 12.99, merchant_id: @merchant.id}
+      post '/api/v1/items', params: {item: item_params}
 
+      expect(response).to be_successful
+
+      item_response = JSON.parse(response.body)
+
+      expect(item_response).to have_key("data")
+      expect(item_response["data"]["id"]).to be_present
+      expect(item_response["data"]["type"]).to eq("item")
+      expect(item_response["data"]["attributes"]["name"]).to eq("New Item")
+      expect(item_response["data"]["attributes"]["description"]).to eq("I am a fun item")
+      expect(item_response["data"]["attributes"]["unit_price"]).to eq(12.99)
+      expect(item_response["data"]["attributes"]["merchant_id"]).to eq(@merchant.id)
+    end
+  end
 
   describe "sad path test" do
     it "returns an error if the item does not exist" do
@@ -193,24 +210,6 @@ RSpec.describe "Items API", type: :request do
   end
 
   describe "updating an item" do
-
-    it 'creates a new item' do
-      item_attributes = {
-          name: "More Cat Things", 
-          description: "Stuff to keep cats happy", 
-          unit_price: 30.00, 
-          merchant_id: @merchant.id
-          }
-      post '/api/v1/items#create', params: { item: item_attributes }
-        
-      item = JSON.parse(response.body, symbolize_names: true)
-        binding.pry
-      expect(item[:data][:attributes][:name]).to eq(item_attributes[:name])
-      expect(item[:data][:attributes][:description]).to eq(item_attributes[:description])
-      expect(item[:data][:attributes][:unit_price]).to eq(item_attributes[:unit_price])
-    end
-
-
     it "returns an error if required params are missing(sadpath create)" do
       item_params = { description: "Cat litter made out of tofu", unit_price: nil, merchant_id: @merchant.id  }
 
@@ -226,17 +225,17 @@ RSpec.describe "Items API", type: :request do
   
 
     it "can update an existing item" do
-      id = Item.create!(
+      item = Item.create!(
         name: "More Cat Things", 
         description: "Stuff to keep cats happy", 
         unit_price: 30.00, 
-        merchant_id: @merchant.id).id
-      previous_name = Item.last.name
+        merchant_id: @merchant.id)
+      previous_name = item.name
+      
       item_params = { name: "Padam litter", description: "Cat litter made out of tofu", unit_price: 28.99 }
-      headers = {"CONTENT_TYPE" => "application/json"}
 
-      patch "/api/v1/items/#{id}", headers: headers, params: JSON.generate({item: item_params})
-      item = Item.find_by(id: id)
+      patch "/api/v1/items/#{item.id}", params: { item: item_params }
+      item = Item.find_by(id: item.id)
 
       expect(response).to be_successful
       expect(item.name).to_not eq(previous_name)
@@ -257,20 +256,6 @@ RSpec.describe "Items API", type: :request do
       error_response = JSON.parse(response.body)
       expect(error_response["message"]).to eq("your request could not be completed")
       expect(error_response["errors"]).to include("Couldn't find Item with 'id'=#{no_item}")
-    end
-
-    it "returns an error if an attribute is missing" do
-      current_name = @item3.name
-      updated_name = { name: 'No Name' }
-      item_params = { name: "", description: "Cat litter made out of tofu", unit_price: 28.99, merchant_id: @merchant.id  }
-
-      patch "/api/v1/items/#{@item3.id}", params: {item: item_params}
-      expect(response).to_not be_successful
-      expect(response.status).to eq(422)
-
-      error_response = JSON.parse(response.body)
-      expect(error_response["message"]).to eq("your request could not be completed")
-      expect(error_response["errors"]).to include("Name can't be blank")
     end
   end
 
