@@ -73,7 +73,7 @@ class Api::V1::ItemsController < ApplicationController
   end  
 
   def invalid_record_response(exception)
-    render json: error_messages([exception.message], 422), status: 422
+    render json: error_messages([exception.message], 400), status: 400
   end
 
   def error_messages(messages, status)
