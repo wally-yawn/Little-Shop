@@ -4,6 +4,7 @@ RSpec.describe Merchant, type: :model do
   describe "relationships" do
     it { should have_many(:items)}
     it { should have_many(:invoices)}
+    it { should have_many(:coupons)}
   end
 
   describe "validations" do
@@ -44,6 +45,8 @@ RSpec.describe Merchant, type: :model do
       expect(Item.count).to eq(2)
       merchant.destroy
       expect(Item.count).to eq(0)
+      #also test this for invoices and coupons
+      expect(true).to eq(false)
     end
   end
 
