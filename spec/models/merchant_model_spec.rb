@@ -42,11 +42,13 @@ RSpec.describe Merchant, type: :model do
       Item.destroy_all
       item1 = merchant.items.create!(name: 'Head bolts', description: 'used as ears and to hold head on', unit_price: 10.99)
       item2 = merchant.items.create!(name: 'Thread', description: 'Used to sew limbs to body', unit_price: 20.99)
+      Coupon.destroy_all
+      coupon = Coupon.create!(merchant: merchant, status: 1, name: "coupon", code: "WALLY", off: 5.5, percent_or_dollar: 1)
       expect(Item.count).to eq(2)
+      expect(Coupon.count).to eq(1)
       merchant.destroy
       expect(Item.count).to eq(0)
-      #also test this for invoices and coupons
-      expect(true).to eq(false)
+      expect(Coupon.count).to eq(0)
     end
   end
 
