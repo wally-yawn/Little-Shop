@@ -11,9 +11,6 @@
     This project had a 9 day timeframe.  As a large full stack group project, it added quite a bit as far as complexity, project and time management, and group dynamics.  As a group, we created a project board to clearly seperate work tasks.  As time went we had some group wins and hiccups.  A good mix of full group, paired, and asynch work space.  We kept in very good contact with daily stand up meetings, lots of group slack messages and live zoom meetings.
 
   ###
-   [Natasha Vasquez] <https://github.com/nvnatasha>
-   [James Cochran] <https://github.com/James-Cochran>
-   [Jonathan Atkins] <https://github.com/Jonathan-Atkins>
    [Wally Wallace]  <https://github.com/wally-yawn>
 
   ###
