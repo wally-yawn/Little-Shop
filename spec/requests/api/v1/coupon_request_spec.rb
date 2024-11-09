@@ -81,22 +81,22 @@ RSpec.describe "Coupons API", type: :request do
 
   describe 'it can create a coupon' do
     it 'can create a valid coupon' do
-      coupon_params = { name: 'Coupon2', merchant_id: @merchant1.id, status: "inactive", code: "CAPYBARA", off: 6.6, percent_or_dollar: "dollar"}
+      coupon_params = { name: "Coupon2", merchant_id: @merchant1.id, status: "inactive", code: "CAPYBARA", off: 6.6, percent_or_dollar: "dollar"}
       post '/api/v1/coupons', params: {coupon: coupon_params}
 
       expect(response).to be_successful
 
-      item_response = JSON.parse(response.body)
+      coupon_response = JSON.parse(response.body)
 
-      expect(item_response).to have_key("data")
-      expect(item_response["data"]["id"]).to be_present
-      expect(item_response["data"]["type"]).to eq("coupon")
-      expect(attrs[:name]).to eq("Coupon2")
-      expect(attrs[:status]).to eq("inactive")
-      expect(attrs[:code]).to eq("CAPYBARA")
-      expect(attrs[:off]).to eq(6.6)
-      expect(attrs[:percent_or_dollar]).to eq("dollar")
-      expect(attrs[:merchant_id]).to eq(@merchant1_id)
+      expect(coupon_response).to have_key("data")
+      expect(coupon_response["data"]["id"]).to be_present
+      expect(coupon_response["data"]["type"]).to eq("coupon")
+      expect(coupon_response["data"]["attributes"]["name"]).to eq("Coupon2")
+      expect(coupon_response["data"]["attributes"]["status"]).to eq("inactive")
+      expect(coupon_response["data"]["attributes"]["code"]).to eq("CAPYBARA")
+      expect(coupon_response["data"]["attributes"]["off"]).to eq(6.6)
+      expect(coupon_response["data"]["attributes"]["percent_or_dollar"]).to eq("dollar")
+      expect(coupon_response["data"]["attributes"]["merchant_id"]).to eq(@merchant1.id)
     end
 
     xit 'returns an error when the merchant does not exist' do
