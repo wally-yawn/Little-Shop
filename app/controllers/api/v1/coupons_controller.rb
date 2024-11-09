@@ -14,19 +14,11 @@ class Api::V1::CouponsController < ApplicationController
 
   private 
   def not_found_response(exception)
-    render json: ErrorSerializer.format_error(exception, "404"), status: :not_found
+    render json: ErrorSerializer.format_error(exception, "404"), status: 404
   end  
 
   def invalid_record_response(exception)
-    render json: error_messages([exception.message], 400), status: 400
-  end
-
-  def error_messages(messages, status)
-    {
-      message: "your request could not be completed",
-      errors: messages,
-      status: status
-    }
+    render json: ErrorSerializer.format_error(exception, "400"), status: 400
   end
 
   def coupon_params
