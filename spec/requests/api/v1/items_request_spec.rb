@@ -85,7 +85,7 @@ RSpec.describe "Items API", type: :request do
         expect(response.status).to eq(404)
     
         data = JSON.parse(response.body, symbolize_names: true)
-       
+
         expect(data[:message]).to eq("your request could not be completed") 
         expect(data[:errors]).to be_a(Array)
     

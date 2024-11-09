@@ -78,6 +78,43 @@ RSpec.describe "Coupons API", type: :request do
       expect(error[:title]).to eq("Couldn't find Coupon with 'id'=#{missing_id}") 
     end
   end
+
+  describe 'it can create a coupon' do
+    it 'can create a valid coupon' do
+      coupon_params = { name: 'Coupon2', merchant_id: @merchant1.id, status: "inactive", code: "CAPYBARA", off: 6.6, percent_or_dollar: "dollar"}
+      post '/api/v1/coupons', params: {coupon: coupon_params}
+
+      expect(response).to be_successful
+
+      item_response = JSON.parse(response.body)
+
+      expect(item_response).to have_key("data")
+      expect(item_response["data"]["id"]).to be_present
+      expect(item_response["data"]["type"]).to eq("coupon")
+      expect(attrs[:name]).to eq("Coupon2")
+      expect(attrs[:status]).to eq("inactive")
+      expect(attrs[:code]).to eq("CAPYBARA")
+      expect(attrs[:off]).to eq(6.6)
+      expect(attrs[:percent_or_dollar]).to eq("dollar")
+      expect(attrs[:merchant_id]).to eq(@merchant1_id)
+    end
+
+    xit 'returns an error when the merchant does not exist' do
+      expect(true).to eq(false)
+    end
+
+    xit 'returns an error when the required parameters are not supplied' do
+      expect(true).to eq(false)
+    end
+
+    xit 'returns an error when the status parameter is not correctly' do
+      expect(true).to eq(false)
+    end
+
+    xit 'returns an error when the percent_or_dollar parameter is not correctly' do
+      expect(true).to eq(false)
+    end
+  end
 end
 
 

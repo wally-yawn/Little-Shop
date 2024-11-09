@@ -29,4 +29,5 @@ Rails.application.routes.draw do
   delete '/api/v1/items/:id', to: 'api/v1/items#destroy'
   
   get '/api/v1/coupons/:id', to: 'api/v1/coupons#show'
+  post '/api/v1/coupons/', to: 'api/v1/coupons#create'
 end
