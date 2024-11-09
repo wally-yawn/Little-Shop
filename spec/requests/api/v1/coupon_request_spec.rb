@@ -51,15 +51,21 @@ RSpec.describe "Coupons API", type: :request do
       expect(coupon[:type]).to eq('coupon')
 
       attrs = coupon[:attributes]
-      
+
       expect(attrs[:name]).to eq(@coupon1.name)
       expect(attrs[:status]).to eq(@coupon1.status)
       expect(attrs[:code]).to eq(@coupon1.code)
       expect(attrs[:off]).to eq(@coupon1.off)
       expect(attrs[:percent_or_dollar]).to eq(@coupon1.percent_or_dollar)
       expect(attrs[:merchant_id]).to eq(@coupon1.merchant_id)
+      expect(attrs[:countInvoices]).to eq(0)
     end
 
+    xit 'returns the count of times used' do
+
+    end
+
+    
     it 'returns an error if coupon is not found' do
       missing_id = @coupon1.id
       @coupon1.destroy
@@ -79,7 +85,7 @@ RSpec.describe "Coupons API", type: :request do
     end
   end
 
-  describe 'it can create a coupon' do
+  describe 'create' do
     it 'can create a valid coupon' do
       coupon_params = { name: "Coupon2", merchant_id: @merchant1.id, status: "inactive", code: "CAPYBARA", off: 6.6, percent_or_dollar: "dollar"}
       post '/api/v1/coupons', params: {coupon: coupon_params}
@@ -97,6 +103,7 @@ RSpec.describe "Coupons API", type: :request do
       expect(coupon_response["data"]["attributes"]["off"]).to eq(6.6)
       expect(coupon_response["data"]["attributes"]["percent_or_dollar"]).to eq("dollar")
       expect(coupon_response["data"]["attributes"]["merchant_id"]).to eq(@merchant1.id)
+      expect(coupon_response["data"]["attributes"]["countInvoices"]).to eq(0)
     end
 
     it 'returns an error when the merchant does not exist' do
