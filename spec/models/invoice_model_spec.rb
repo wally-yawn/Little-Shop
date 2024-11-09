@@ -56,5 +56,14 @@ RSpec.describe Invoice, type: :model do
         expect(invoices).to eq([])
       end
     end
+    
+    describe 'optional coupon parameter' do
+      it 'can add an optional coupon_id' do
+        coupon = Coupon.create!(name: "Coupon 1", merchant_id: @merchant.id, status: "active", code: "COUP1", off: 5, percent_or_dollar: "percent")
+        invoice4 = Invoice.create!(customer: @customer, merchant: @merchant, status: "completed", coupon: coupon)
+
+        expect(invoice4.coupon_id).to eq(coupon.id)
+      end
+    end
   end
 end

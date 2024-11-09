@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe "Coupons API", type: :request do 
   before(:each) do
     @merchant1 = Merchant.create!(name: 'Wally Wallace')
-    @coupon1 = Coupon.create(name: "Coupon 1", merchant_id: @merchant1.id, status: "active", code: "COUP1", off: 5, percent_or_dollar: "percent")
+    @coupon1 = Coupon.create!(name: "Coupon 1", merchant_id: @merchant1.id, status: "active", code: "COUP1", off: 5, percent_or_dollar: "percent")
   end
 
   describe 'index' do
@@ -107,9 +107,7 @@ RSpec.describe "Coupons API", type: :request do
       post '/api/v1/coupons', params: {coupon: coupon_params}
       expect(response).to_not be_successful
       expect(response.status).to eq(400)
-      # binding.pry
       error_response = JSON.parse(response.body)
-      # binding.pry
       expect(error_response["message"]).to eq("your request could not be completed")
       expect(error_response["errors"].first["title"]).to eq("Validation failed: Merchant must exist")
     end
