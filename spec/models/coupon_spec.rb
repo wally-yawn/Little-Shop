@@ -32,10 +32,6 @@ RSpec.describe Coupon, type: :model do
       expect{ @coupon1.deactivate }.to raise_error(CouponDeactivationError)
       expect(@coupon1.status).to eq("active")
     end
-
-    xit 'cannot deactivate a coupon that is inactive' do
-
-    end
   end
 
   describe 'activate' do
@@ -57,9 +53,6 @@ RSpec.describe Coupon, type: :model do
       coupon6 = Coupon.create!(name: "Coupon 6", merchant_id: @merchant1.id, status: "active", code: "COUP16", off: 5, percent_or_dollar: "percent")
       expect{ @coupon1.activate }.to raise_error(FiveActiveCouponsError)
       expect(@coupon1.status).to eq("inactive")
-    end
-
-    xit 'it cannot activate a coupon if the coupon is already active' do
     end
   end
 
