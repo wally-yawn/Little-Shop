@@ -1,6 +1,7 @@
 class Api::V1::CouponsController < ApplicationController
   rescue_from ActiveRecord::RecordNotFound, with: :not_found_response
   rescue_from ActiveRecord::RecordInvalid, with: :invalid_record_response
+  rescue_from CouponDeactivationError, with: :deactivation_error_response
 
   def show
     coupon = Coupon.find(params[:id])
@@ -26,6 +27,10 @@ class Api::V1::CouponsController < ApplicationController
 
   def invalid_record_response(exception)
     render json: ErrorSerializer.format_error(exception, "400"), status: 400
+  end
+
+  def deactivation_error_response(exception)
+    render json: ErrorSerializer.format_error(exception, "422"), status: 422
   end
 
   def coupon_params

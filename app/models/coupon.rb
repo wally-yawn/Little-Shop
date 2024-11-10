@@ -9,8 +9,9 @@ class Coupon < ApplicationRecord
   def deactivate
     pending_invoices = Invoice.where("coupon_id = ? AND status = 'pending'", self.id)
     if pending_invoices.count == 0
-      self.update(status: "inactive")
-      puts self.errors.full_messages if self.errors.any?
+      self.update!(status: "inactive")
+    else 
+      raise CouponDeactivationError, "This coupon applies to pending invoices"
     end
   end
 end

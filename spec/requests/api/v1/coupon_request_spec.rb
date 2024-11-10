@@ -4,6 +4,7 @@ RSpec.describe "Coupons API", type: :request do
   before(:each) do
     @merchant1 = Merchant.create!(name: 'Wally Wallace')
     @coupon1 = Coupon.create!(name: "Coupon 1", merchant_id: @merchant1.id, status: "active", code: "COUP1", off: 5, percent_or_dollar: "percent")
+    @customer1 = Customer.create!(first_name: "Wally", last_name: "Wallace")
   end
 
   describe 'show' do
@@ -134,12 +135,38 @@ RSpec.describe "Coupons API", type: :request do
 
     end
 
-    xit 'cannot deactivate an active coupon with pending invoices' do
+    it 'cannot deactivate an active coupon with pending invoices' do
+      @invoice1 = Invoice.create!(customer: @customer1, merchant: @merchant1, status: "pending", coupon: @coupon1)
+      patch "/api/v1/coupons/#{@coupon1.id}/deactivate"
+
+      expect(response).to_not be_successful
+      expect(response.status).to eq(422)
+      
+
+      data = JSON.parse(response.body, symbolize_names: true)
+
+      expect(data[:message]).to eq("your request could not be completed") 
+      expect(data[:errors]).to be_a(Array)
+  
+      error = data[:errors].first
+      expect(error[:status]).to eq("422")
+      expect(error[:title]).to eq("This coupon applies to pending invoices") 
 
     end
 
-    xit 'can deactivate an active coupon with shipped invoices' do
+    it 'can deactivate an active coupon with shipped invoices' do
+      @invoice1 = Invoice.create!(customer: @customer1, merchant: @merchant1, status: "shipped", coupon: @coupon1)
+      patch "/api/v1/coupons/#{@coupon1.id}/deactivate"
 
+      expect(response).to be_successful
+      expect(response.status).to eq(200)
+      
+      coupon = JSON.parse(response.body, symbolize_names: true)[:data]
+
+      expect(coupon[:id]).to eq(@coupon1.id.to_s)
+      expect(coupon[:attributes][:status]).to eq("inactive")
+      @coupon1.reload
+      expect(@coupon1.status).to eq("inactive")
     end
 
     it 'returns an error if the coupon does not exist' do

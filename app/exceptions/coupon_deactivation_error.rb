@@ -1,0 +1,3 @@
+class CouponDeactivationError < StandardError
+  
+end
