@@ -73,7 +73,12 @@ RSpec.describe Coupon, type: :model do
       expect{ Coupon.create_coupon(params) }.to raise_error(FiveActiveCouponsError)
     end
 
-    xit 'cannot create a coupon if the merchant does not exist' do
+    it 'cannot create a coupon if the merchant does not exist' do
+      missing_id = @merchant1.id
+      @merchant1.destroy
+      params = {name: "Coupon 1", merchant_id: "#{missing_id}", status: "active", code: "COUP1", off: 5, percent_or_dollar: "percent"}
+      
+      expect{ Coupon.create_coupon(params) }.to raise_error(ActiveRecord::RecordNotFound)
     end
   end
 end
