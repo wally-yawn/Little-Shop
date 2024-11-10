@@ -131,12 +131,16 @@ RSpec.describe Merchant, type: :model do
   end
 
   describe 'get_coupon_count' do
-    xit 'returns the coupon count when none exist' do
-
+    before :each do
+      @merchant1 = Merchant.create(name: 'Wally')
+    end
+    it 'returns the coupon count when none exist' do
+      expect(@merchant1.get_coupon_count).to eq(0)
     end
 
-    xit 'returns the coupon count when none exist' do
-      
+    it 'returns the coupon count when multiple exist' do
+      @coupon1 = Coupon.create!(name: "Coupon 1", merchant_id: @merchant1.id, status: "active", code: "COUP1", off: 5, percent_or_dollar: "percent")
+      expect(@merchant1.get_coupon_count).to eq(1)
     end
   end
 

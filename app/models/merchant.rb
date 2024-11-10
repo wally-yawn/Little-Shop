@@ -53,4 +53,12 @@ class Merchant < ApplicationRecord
       { error: { message: "you need to specify a name", status: 404 } }
     end
   end
+
+  def get_coupon_count
+    Coupon.where(merchant: self).count
+  end
+
+  def get_invoice_coupon_count
+
+  end
 end
