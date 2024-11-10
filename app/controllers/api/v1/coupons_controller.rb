@@ -12,10 +12,17 @@ class Api::V1::CouponsController < ApplicationController
     render json: CouponSerializer.new(coupon), status: 201
   end
 
+  def deactivate
+    coupon = Coupon.find(params[:id])
+    coupon.deactivate
+    render json: CouponSerializer.new(coupon)
+  end
+
+
   private 
   def not_found_response(exception)
     render json: ErrorSerializer.format_error(exception, "404"), status: 404
-  end  
+  end
 
   def invalid_record_response(exception)
     render json: ErrorSerializer.format_error(exception, "400"), status: 400

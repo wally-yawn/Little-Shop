@@ -20,4 +20,21 @@ RSpec.describe Coupon, type: :model do
       expect(@coupon1.count_invoices).to eq(1)
     end
   end
+
+  describe 'deactivate' do
+    it 'can deactivate a coupon' do
+      @coupon1.deactivate
+      expect(@coupon1.status).to eq("inactive")
+    end
+
+    it 'cannot deactivate a coupon that is on a pending invoice' do
+      @invoice3 = Invoice.create!(customer: @customer1, merchant: @merchant1, status: "pending", coupon: @coupon1)
+      @coupon1.deactivate
+      expect(@coupon1.status).to eq("active")
+    end
+
+    xit 'cannot deactivate a coupon that is inactive' do
+
+    end
+  end
 end

@@ -117,6 +117,49 @@ RSpec.describe "Coupons API", type: :request do
       expect(true).to eq(false)
     end
   end
+
+  describe 'deactivate' do
+    it 'can deactivate an active coupon' do
+      patch "/api/v1/coupons/#{@coupon1.id}/deactivate"
+
+      expect(response).to be_successful
+      expect(response.status).to eq(200)
+      
+      coupon = JSON.parse(response.body, symbolize_names: true)[:data]
+
+      expect(coupon[:id]).to eq(@coupon1.id.to_s)
+      expect(coupon[:attributes][:status]).to eq("inactive")
+      @coupon1.reload
+      expect(@coupon1.status).to eq("inactive")
+
+    end
+
+    xit 'cannot deactivate an active coupon with pending invoices' do
+
+    end
+
+    xit 'can deactivate an active coupon with shipped invoices' do
+
+    end
+
+    it 'returns an error if the coupon does not exist' do
+      missing_id = @coupon1.id
+      @coupon1.destroy
+
+      patch "/api/v1/coupons/#{@coupon1.id}/deactivate"
+      expect(response).to_not be_successful
+      expect(response.status).to eq(404)
+
+      data = JSON.parse(response.body, symbolize_names: true)
+
+      expect(data[:message]).to eq("your request could not be completed") 
+      expect(data[:errors]).to be_a(Array)
+  
+      error = data[:errors].first
+      expect(error[:status]).to eq("404")
+      expect(error[:title]).to eq("Couldn't find Coupon with 'id'=#{missing_id}") 
+    end
+  end
 end
 
 
