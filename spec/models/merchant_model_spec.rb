@@ -129,4 +129,24 @@ RSpec.describe Merchant, type: :model do
       expect(merchants.find_by(id: @merchant2.id).item_count).to eq(0)
     end
   end
+
+  describe 'get_coupon_count' do
+    xit 'returns the coupon count when none exist' do
+
+    end
+
+    xit 'returns the coupon count when none exist' do
+      
+    end
+  end
+
+  describe 'get_invoice_coupon_count' do
+    xit 'returns the invoice coupon count when none exist' do
+
+    end
+
+    xit 'returns the invoice coupon count when none exist' do
+      
+    end
+  end
 end
