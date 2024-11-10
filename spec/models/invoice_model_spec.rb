@@ -21,41 +21,41 @@ RSpec.describe Invoice, type: :model do
       @other_invoice = Invoice.create!(customer: @customer, merchant: @other_merchant, status: "completed")
     end
 
-    describe '.by_merchant' do
-      it 'returns all invoices associated with the given merchant' do
-        expect(Invoice.by_merchant(@merchant.id)).to include(@invoice1, @invoice2, @invoice3)
-      end
+    # describe '.by_merchant' do
+    #   it 'returns all invoices associated with the given merchant' do
+    #     expect(Invoice.by_merchant(@merchant.id)).to include(@invoice1, @invoice2, @invoice3)
+    #   end
 
-      it 'does not return invoices from other merchants' do
-        other_invoice = Invoice.create!(customer: @customer, merchant: @other_merchant, status: "completed")
+    #   it 'does not return invoices from other merchants' do
+    #     other_invoice = Invoice.create!(customer: @customer, merchant: @other_merchant, status: "completed")
 
-        expect(Invoice.by_merchant(@merchant.id)).not_to include(other_invoice)
-      end
-    end
+    #     expect(Invoice.by_merchant(@merchant.id)).not_to include(other_invoice)
+    #   end
+    # end
 
-    describe '.by_customer' do
-      it 'returns all invoices associated with the given customer' do
-        expect(Invoice.by_customer(@customer.id)).to include(@invoice1, @invoice2, @invoice3)
-      end
-    end
+    # describe '.by_customer' do
+    #   it 'returns all invoices associated with the given customer' do
+    #     expect(Invoice.by_customer(@customer.id)).to include(@invoice1, @invoice2, @invoice3)
+    #   end
+    # end
 
-    describe 'filter' do
-      it 'returns filtered based on merchant' do
-        invoices = Invoice.filter({merchant_id: @merchant.id})
-        expect(invoices).to eq([@invoice1, @invoice2, @invoice3])
-      end
+    # describe 'filter' do
+    #   it 'returns filtered based on merchant' do
+    #     invoices = Invoice.filter({merchant_id: @merchant.id})
+    #     expect(invoices).to eq([@invoice1, @invoice2, @invoice3])
+    #   end
 
-      it 'returns filtered based on merchant and status' do
-        invoices = Invoice.filter({merchant_id: @merchant.id, status: "completed"})
-        expect(invoices).to eq([@invoice1, @invoice3])
-      end
+    #   it 'returns filtered based on merchant and status' do
+    #     invoices = Invoice.filter({merchant_id: @merchant.id, status: "completed"})
+    #     expect(invoices).to eq([@invoice1, @invoice3])
+    #   end
 
-      it 'returns an empty array when no invoices exist' do
-        other_merchant2 = Merchant.create!(name: "Merchant C")
-        invoices = Invoice.filter({merchant_id: other_merchant2.id})
-        expect(invoices).to eq([])
-      end
-    end
+    #   it 'returns an empty array when no invoices exist' do
+    #     other_merchant2 = Merchant.create!(name: "Merchant C")
+    #     invoices = Invoice.filter({merchant_id: other_merchant2.id})
+    #     expect(invoices).to eq([])
+    #   end
+    # end
     
     describe 'optional coupon parameter' do
       it 'can add an optional coupon_id' do

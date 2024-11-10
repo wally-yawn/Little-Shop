@@ -1,32 +1,33 @@
 class InvoiceSerializer
-    def self.format_invoices(invoices)
+  def self.format_invoices(invoices)
+    {
+      data: invoices.map do |invoice|
         {
-            data: invoices.map do |invoice|
-                {
-                    id: invoice.id.to_s,
-                    type: 'invoice',
-                    attributes: {
-                        status: invoice.status,
-                        merchant_id: invoice.merchant_id,
-                        customer_id: invoice.customer_id
-                    }
-                }
-            end,
+          id: invoice.id.to_s,
+          type: 'invoice',
+          attributes: {
+            customer_id: invoice.customer_id,
+            merchant_id: invoice.merchant_id,
+            coupon_id: invoice.coupon_id,
+            status: invoice.status,
+          }
         }
-    end
+      end
+    }
+  end
 
-
-    def self.format_invoice(invoice)
-        {
-            data: {
-                id: invoice.id.to_s,
-                type: 'invoice',
-                attributes: {
-                    status: invoice.status,
-                    merchant_id: invoice.merchant_id,
-                    customer_id: invoice.customer_id
-                }
-            }
-        }
-    end
+  # def self.format_invoice(invoice)
+  #   {
+  #     data: {
+  #       id: invoice.id.to_s,
+  #       type: 'invoice',
+  #       attributes: {
+  #         customer_id: invoice.customer_id,
+  #         merchant_id: invoice.merchant_id,
+  #         coupon_id: invoice.coupon_id,
+  #         status: invoice.status,
+  #       }
+  #     }
+  #   }
+  # end
 end
