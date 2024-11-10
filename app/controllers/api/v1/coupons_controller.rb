@@ -10,7 +10,7 @@ class Api::V1::CouponsController < ApplicationController
   end
 
   def create
-    coupon = Coupon.create!(coupon_params)
+    coupon = Coupon.create_coupon(coupon_params)
     render json: CouponSerializer.new(coupon), status: 201
   end
 

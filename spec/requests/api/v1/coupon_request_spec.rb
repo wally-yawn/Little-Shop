@@ -45,7 +45,6 @@ RSpec.describe "Coupons API", type: :request do
       expect(coupon[:attributes][:count_invoices]).to eq(1)
     end
 
-    
     it 'returns an error if coupon is not found' do
       missing_id = @coupon1.id
       @coupon1.destroy
@@ -87,16 +86,17 @@ RSpec.describe "Coupons API", type: :request do
     end
 
     it 'returns an error when the merchant does not exist' do
+      missing_merchant = @merchant1.id
       @merchant1.destroy
 
       coupon_params = { name: "Coupon2", merchant_id: @merchant1.id, status: "inactive", code: "CAPYBARA", off: 6.6, percent_or_dollar: "dollar"}
       
       post '/api/v1/coupons', params: {coupon: coupon_params}
       expect(response).to_not be_successful
-      expect(response.status).to eq(400)
+      expect(response.status).to eq(404)
       error_response = JSON.parse(response.body)
       expect(error_response["message"]).to eq("your request could not be completed")
-      expect(error_response["errors"].first["title"]).to eq("Validation failed: Merchant must exist")
+      expect(error_response["errors"].first["title"]).to eq("Couldn't find Merchant with 'id'=#{missing_merchant}")
     end
 
     it 'returns an error when the required parameters are not supplied' do
@@ -104,11 +104,11 @@ RSpec.describe "Coupons API", type: :request do
       
       post '/api/v1/coupons', params: {coupon: coupon_params}
       expect(response).to_not be_successful
-      expect(response.status).to eq(400)
+      expect(response.status).to eq(404)
 
       error_response = JSON.parse(response.body)
       expect(error_response["message"]).to eq("your request could not be completed")
-      expect(error_response["errors"].first["title"]).to eq("Validation failed: Merchant must exist")
+      expect(error_response["errors"].first["title"]).to eq("Couldn't find Merchant without an ID")
     end
 
     xit 'returns an error when the status parameter is not correctly' do

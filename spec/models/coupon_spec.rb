@@ -59,7 +59,28 @@ RSpec.describe Coupon, type: :model do
       expect(@coupon1.status).to eq("inactive")
     end
 
-    xit 'it cannot activate a coupon if the coupon is already active'
+    xit 'it cannot activate a coupon if the coupon is already active' do
+    end
   end
 
+  describe 'create_coupon' do
+    it 'can create a coupon' do
+      params = {name: "Coupon 1", merchant_id: "#{@merchant1.id}", status: "active", code: "COUP1", off: 5, percent_or_dollar: "percent"}
+      Coupon.create_coupon(params)
+    end
+
+    it 'cannot create a coupon if the merchant has 5 active coupons' do
+      coupon2 = Coupon.create!(name: "Coupon 2", merchant_id: @merchant1.id, status: "active", code: "COUP2", off: 5, percent_or_dollar: "percent")
+      coupon3 = Coupon.create!(name: "Coupon 3", merchant_id: @merchant1.id, status: "active", code: "COUP3", off: 5, percent_or_dollar: "percent")
+      coupon4 = Coupon.create!(name: "Coupon 4", merchant_id: @merchant1.id, status: "active", code: "COUP4", off: 5, percent_or_dollar: "percent")
+      coupon5 = Coupon.create!(name: "Coupon 5", merchant_id: @merchant1.id, status: "active", code: "COUP5", off: 5, percent_or_dollar: "percent")
+
+      params = {name: "Coupon 1", merchant_id: "#{@merchant1.id}", status: "active", code: "COUP1", off: 5, percent_or_dollar: "percent"}
+      
+      expect{ Coupon.create_coupon(params) }.to raise_error(FiveActiveCouponsError)
+    end
+
+    xit 'cannot create a coupon if the merchant does not exist' do
+    end
+  end
 end

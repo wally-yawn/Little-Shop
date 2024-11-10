@@ -24,4 +24,14 @@ class Coupon < ApplicationRecord
     end
   end
 
+  def self.create_coupon(params)
+    merchant = Merchant.find(params[:merchant_id])
+    activeCoupons = Coupon.where("merchant_id = ?", params[:merchant_id])
+    if activeCoupons.count < 5
+      coupon = Coupon.create!(params)
+    else
+      raise FiveActiveCouponsError, "Merchant #{params[:merchant_id]} already has 5 active coupons"
+    end
+  end
+
 end
