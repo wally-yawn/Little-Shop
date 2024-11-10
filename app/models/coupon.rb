@@ -14,4 +14,14 @@ class Coupon < ApplicationRecord
       raise CouponDeactivationError, "This coupon applies to pending invoices"
     end
   end
+
+  def activate
+    activeCoupons = Coupon.where("merchant_id = ?", self.merchant_id)
+    if activeCoupons.count < 5
+      self.update!(status: "active")
+    else 
+      raise FiveActiveCouponsError, "Merchant #{self.merchant_id} already has 5 active coupons"
+    end
+  end
+
 end

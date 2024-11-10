@@ -1,0 +1,3 @@
+class FiveActiveCouponsError < StandardError
+  
+end

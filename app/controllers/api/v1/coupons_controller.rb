@@ -2,6 +2,7 @@ class Api::V1::CouponsController < ApplicationController
   rescue_from ActiveRecord::RecordNotFound, with: :not_found_response
   rescue_from ActiveRecord::RecordInvalid, with: :invalid_record_response
   rescue_from CouponDeactivationError, with: :deactivation_error_response
+  rescue_from FiveActiveCouponsError, with: :five_active_coupons_error_response
 
   def show
     coupon = Coupon.find(params[:id])
@@ -19,6 +20,12 @@ class Api::V1::CouponsController < ApplicationController
     render json: CouponSerializer.new(coupon)
   end
 
+  def activate
+    coupon = Coupon.find(params[:id])
+    coupon.activate
+    render json: CouponSerializer.new(coupon)
+  end
+
 
   private 
   def not_found_response(exception)
@@ -30,6 +37,10 @@ class Api::V1::CouponsController < ApplicationController
   end
 
   def deactivation_error_response(exception)
+    render json: ErrorSerializer.format_error(exception, "422"), status: 422
+  end
+
+  def five_active_coupons_error_response(exception)
     render json: ErrorSerializer.format_error(exception, "422"), status: 422
   end
 

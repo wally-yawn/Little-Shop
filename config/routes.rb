@@ -35,6 +35,7 @@ Rails.application.routes.draw do
       post '/coupons', to: 'coupons#create'
       get '/merchants/:merchant_id/coupons', to: 'merchant_coupons#index'
       patch '/coupons/:id/deactivate', to: 'coupons#deactivate'
+      patch '/coupons/:id/activate', to: 'coupons#activate'
     end
   end
 end

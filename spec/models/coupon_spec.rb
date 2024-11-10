@@ -37,4 +37,29 @@ RSpec.describe Coupon, type: :model do
 
     end
   end
+
+  describe 'activate' do
+    it 'can activate a coupon' do
+      @coupon1.deactivate
+      expect(@coupon1.status).to eq("inactive")
+      @coupon1.activate
+      expect(@coupon1.status).to eq("active")
+    end
+
+    it 'it cannot activate a coupon if the merchant already has 5 active coupons' do
+      @coupon1.deactivate
+      expect(@coupon1.status).to eq("inactive")
+
+      coupon2 = Coupon.create!(name: "Coupon 2", merchant_id: @merchant1.id, status: "active", code: "COUP2", off: 5, percent_or_dollar: "percent")
+      coupon3 = Coupon.create!(name: "Coupon 3", merchant_id: @merchant1.id, status: "active", code: "COUP3", off: 5, percent_or_dollar: "percent")
+      coupon4 = Coupon.create!(name: "Coupon 4", merchant_id: @merchant1.id, status: "active", code: "COUP4", off: 5, percent_or_dollar: "percent")
+      coupon5 = Coupon.create!(name: "Coupon 5", merchant_id: @merchant1.id, status: "active", code: "COUP5", off: 5, percent_or_dollar: "percent")
+      coupon6 = Coupon.create!(name: "Coupon 6", merchant_id: @merchant1.id, status: "active", code: "COUP16", off: 5, percent_or_dollar: "percent")
+      expect{ @coupon1.activate }.to raise_error(FiveActiveCouponsError)
+      expect(@coupon1.status).to eq("inactive")
+    end
+
+    xit 'it cannot activate a coupon if the coupon is already active'
+  end
+
 end
