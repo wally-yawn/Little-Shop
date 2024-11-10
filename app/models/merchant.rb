@@ -59,6 +59,6 @@ class Merchant < ApplicationRecord
   end
 
   def get_invoice_coupon_count
-
+    Invoice.where(merchant: self).where.not(coupon_id: nil).count
   end
 end
