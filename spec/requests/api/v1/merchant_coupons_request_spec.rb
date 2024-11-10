@@ -4,7 +4,7 @@ RSpec.describe "Merchants Coupon API" do
   before :each do
     @merchant1 = Merchant.create(name: 'Wally')
     @merchant2 = Merchant.create(name: 'Dahlia')
-    @merchant2 = Merchant.create(name: 'Brinklee')
+    @merchant3 = Merchant.create(name: 'Brinklee')
     @coupon1 = Coupon.create!(name: "Coupon 1", merchant_id: @merchant1.id, status: "active", code: "COUP1", off: 5, percent_or_dollar: "percent")
     @coupon2 = Coupon.create!(name: "Coupon 2", merchant_id: @merchant1.id, status: "inactive", code: "COUP2", off: 10, percent_or_dollar: "dollar")
     @coupon3 = Coupon.create!(name: "Coupon 3", merchant_id: @merchant2.id, status: "inactive", code: "COUP3", off: 1, percent_or_dollar: "dollar")
@@ -47,11 +47,26 @@ RSpec.describe "Merchants Coupon API" do
     end
 
     it 'does not error when the merchant exists but no coupons exist' do
-
+      get "/api/v1/merchants/#{@merchant3.id}/coupons"
+      expect(response).to be_successful
+      merchant_coupons = JSON.parse(response.body)
+      expect(merchant_coupons["data"].length).to eq(0)
     end
 
     it 'returns an error when the merchant does not exist' do
+      missing_id = @merchant3.id
+      @merchant3.destroy
 
+      get "/api/v1/merchants/#{missing_id}"
+      expect(response).to_not be_successful
+      expect(response.status).to eq(404)
+  
+      data = JSON.parse(response.body, symbolize_names: true)
+  
+      expect(data[:errors]).to be_a(Array)
+  
+      expect(data[:message]).to eq("your query could not be completed") 
+      expect(data[:errors].first).to eq("Couldn't find Merchant with 'id'=#{missing_id}") 
     end
   end
 end
