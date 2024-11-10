@@ -65,4 +65,35 @@ RSpec.describe "Merchants Coupon API" do
       expect(error_response[:errors].first[:title]).to eq("Couldn't find Merchant with 'id'=#{missing_id}")
     end
   end
+
+  describe 'filter on active/inactive coupons' do
+    it 'can return only active coupons' do
+      get "/api/v1/merchants/#{@merchant1.id}/coupons?status=active"
+      expect(response).to be_successful
+      merchant_coupons = JSON.parse(response.body)
+
+      expect(merchant_coupons["data"].count).to eq(1)
+      expect(merchant_coupons["data"][0]["id"]).to eq(@coupon1.id.to_s)
+    end
+
+    it 'can return only inactive coupons' do
+      @coupon4 = Coupon.create!(name: "Coupon 4", merchant_id: @merchant1.id, status: "inactive", code: "COUP4", off: 10, percent_or_dollar: "dollar")
+      get "/api/v1/merchants/#{@merchant1.id}/coupons?status=inactive"
+
+      expect(response).to be_successful
+      merchant_coupons = JSON.parse(response.body)
+
+      expect(merchant_coupons["data"].count).to eq(2)
+      expect(merchant_coupons["data"][0]["id"]).to eq(@coupon2.id.to_s)
+      expect(merchant_coupons["data"][1]["id"]).to eq(@coupon4.id.to_s)
+    end
+
+    xit 'does not error if there are no active coupons' do
+
+    end
+
+    xit 'does not error if there are no inactive coupons' do
+
+    end
+  end
 end

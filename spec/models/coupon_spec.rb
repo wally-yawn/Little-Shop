@@ -81,4 +81,22 @@ RSpec.describe Coupon, type: :model do
       expect{ Coupon.create_coupon(params) }.to raise_error(ActiveRecord::RecordNotFound)
     end
   end
+
+  describe 'filter on active/inactive coupons' do
+    it 'can return only active coupons' do
+
+    end
+
+    it 'can return only inactive coupons' do
+
+    end
+
+    it 'does not error if there are no active coupons' do
+
+    end
+
+    it 'does not error if there are no inactive coupons' do
+
+    end
+  end
 end
