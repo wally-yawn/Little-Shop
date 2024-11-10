@@ -6,38 +6,6 @@ RSpec.describe "Coupons API", type: :request do
     @coupon1 = Coupon.create!(name: "Coupon 1", merchant_id: @merchant1.id, status: "active", code: "COUP1", off: 5, percent_or_dollar: "percent")
   end
 
-  describe 'index' do
-    xit 'can fetch all coupons' do
-      get '/api/v1/coupons'
-      
-      expect(response).to be_successful
-      expect(response.status).to eq(200)
-      
-      coupons = JSON.parse(response.body, symbolize_names: true)[:data]
-      expect(coupons).to be_an(Array)
-
-      coupon = coupons[0]
-      expect(coupon[:id].to_i).to be_an(Integer)
-      expect(coupon[:type]).to eq('coupon')
-
-      attrs = coupon[:attributes]
-
-      expect(attrs[:name]).to be_an(String)
-      expect(attrs[:description]).to be_an(String)
-      expect(attrs[:unit_price]).to be_a(Float)
-      expect(attrs[:merchant_id]).to be_an(Integer)
-    end  
-
-    xit "can fetch all coupons when there are no coupons" do
-      coupon.destroy_all
-    
-      get "/api/v1/coupons"
-      expect(response).to be_successful
-      coupons = JSON.parse(response.body)
-      expect(coupons["data"].count).to eq(0)
-    end
-  end
-  
   describe 'show' do
     it 'can fetch an individual coupon' do
       get "/api/v1/coupons/#{@coupon1.id}"
@@ -61,8 +29,18 @@ RSpec.describe "Coupons API", type: :request do
       expect(attrs[:countInvoices]).to eq(0)
     end
 
-    xit 'returns the count of times used' do
+    it 'returns the count of times used' do
+      @customer1 = Customer.create!(first_name: "Wally", last_name: "Wallace")
+      @invoice1 = Invoice.create!(customer: @customer1, merchant: @merchant1, status: "shipped", coupon: @coupon1)
+      get "/api/v1/coupons/#{@coupon1.id}"
+      
+      expect(response).to be_successful
+      expect(response.status).to eq(200)
+      
+      coupon = JSON.parse(response.body, symbolize_names: true)[:data]
 
+      expect(coupon[:id]).to eq(@coupon1.id.to_s)
+      expect(coupon[:attributes][:countInvoices]).to eq(1)
     end
 
     
