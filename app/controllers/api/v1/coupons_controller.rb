@@ -4,17 +4,12 @@ class Api::V1::CouponsController < ApplicationController
 
   def show
     coupon = Coupon.find(params[:id])
-    # binding.pry
     render json: CouponSerializer.new(coupon)
   end
 
   def create
     coupon = Coupon.create!(coupon_params)
     render json: CouponSerializer.new(coupon), status: 201
-  end
-
-  def index
-
   end
 
   private 
