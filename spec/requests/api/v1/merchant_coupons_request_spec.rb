@@ -88,12 +88,22 @@ RSpec.describe "Merchants Coupon API" do
       expect(merchant_coupons["data"][1]["id"]).to eq(@coupon4.id.to_s)
     end
 
-    xit 'does not error if there are no active coupons' do
+    it 'does not error if there are no active coupons' do
+      @coupon1.deactivate
+      get "/api/v1/merchants/#{@merchant1.id}/coupons?status=active"
+      expect(response).to be_successful
+      merchant_coupons = JSON.parse(response.body)
 
+      expect(merchant_coupons["data"].count).to eq(0)
     end
 
-    xit 'does not error if there are no inactive coupons' do
+    it 'does not error if there are no inactive coupons' do
+      @coupon2.activate
+      get "/api/v1/merchants/#{@merchant1.id}/coupons?status=inactive"
+      expect(response).to be_successful
+      merchant_coupons = JSON.parse(response.body)
 
+      expect(merchant_coupons["data"].count).to eq(0)
     end
   end
 end
