@@ -105,5 +105,17 @@ RSpec.describe "Merchants Coupon API" do
 
       expect(merchant_coupons["data"].count).to eq(0)
     end
+
+    it 'returns an error when the merchant does not exist' do
+      missing_id = @merchant3.id
+      @merchant3.destroy
+
+      get "/api/v1/merchants/#{missing_id}/coupons?status=active"
+
+      expect(response).to have_http_status(404)
+      error_response = JSON.parse(response.body, symbolize_names: true)
+      expect(error_response).to have_key(:errors)
+      expect(error_response[:errors].first[:title]).to eq("Couldn't find Merchant with 'id'=#{missing_id}")
+    end
   end
 end

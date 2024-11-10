@@ -111,12 +111,27 @@ RSpec.describe "Coupons API", type: :request do
       expect(error_response["errors"].first["title"]).to eq("Couldn't find Merchant without an ID")
     end
 
-    xit 'returns an error when the status parameter is not correctly' do
-      expect(true).to eq(false)
-    end
+    it 'returns an error if there are already 5 active coupons' do
+      coupon3 = Coupon.create!(name: "Coupon 2", merchant_id: @merchant1.id, status: "active", code: "COUP2", off: 5, percent_or_dollar: "percent")
+      coupon4 = Coupon.create!(name: "Coupon 3", merchant_id: @merchant1.id, status: "active", code: "COUP3", off: 5, percent_or_dollar: "percent")
+      coupon5 = Coupon.create!(name: "Coupon 4", merchant_id: @merchant1.id, status: "active", code: "COUP4", off: 5, percent_or_dollar: "percent")
+      coupon6 = Coupon.create!(name: "Coupon 5", merchant_id: @merchant1.id, status: "active", code: "COUP5", off: 5, percent_or_dollar: "percent")
+      
+      coupon_params = { name: "Coupon6", merchant_id: @merchant1.id, status: "active", code: "COUP6", off: 6.6, percent_or_dollar: "dollar"}
+      
+      post '/api/v1/coupons', params: {coupon: coupon_params}
 
-    xit 'returns an error when the percent_or_dollar parameter is not correctly' do
-      expect(true).to eq(false)
+      expect(response).to_not be_successful
+      expect(response.status).to eq(422)
+      
+      data = JSON.parse(response.body, symbolize_names: true)
+
+      expect(data[:message]).to eq("your request could not be completed") 
+      expect(data[:errors]).to be_a(Array)
+  
+      error = data[:errors].first
+      expect(error[:status]).to eq("422")
+      expect(error[:title]).to eq("Merchant #{@merchant1.id} already has 5 active coupons") 
     end
   end
 
