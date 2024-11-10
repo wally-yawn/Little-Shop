@@ -29,8 +29,27 @@ RSpec.describe "Merchants API" do
         end
       end
 
-      xit 'returns coupons and invoice coupon counts when coupons and invoice coupons exist' do
+      it 'returns coupons and invoice coupon counts' do
+        @coupon1 = Coupon.create!(name: "Coupon 1", merchant_id: @merchant1.id, status: "active", code: "COUP1", off: 5, percent_or_dollar: "percent")
+        @coupon2 = Coupon.create!(name: "Coupon 2", merchant_id: @merchant2.id, status: "active", code: "COUP2", off: 5, percent_or_dollar: "percent")
+        @customer = Customer.create!(first_name: "Lisa", last_name: "Reeve")
+        @invoice1 = Invoice.create!(coupon: @coupon1, customer: @customer, merchant: @merchant1, status: "completed")
+        @invoice2 = Invoice.create!(customer: @customer, merchant: @merchant1, status: "packaged")
+        @invoice3 = Invoice.create!(coupon: @coupon1, customer: @customer, merchant: @merchant1, status: "returned")
 
+
+        get "/api/v1/merchants"
+        expect(response).to be_successful
+        merchants = JSON.parse(response.body)
+        
+        expect(merchants["data"][0]["attributes"]["coupons_count"]).to eq(1)
+        expect(merchants["data"][0]["attributes"]["invoice_coupon_count"]).to eq(2)
+        expect(merchants["data"][1]["attributes"]["coupons_count"]).to eq(1)
+        expect(merchants["data"][1]["attributes"]["invoice_coupon_count"]).to eq(0)
+        expect(merchants["data"][2]["attributes"]["coupons_count"]).to eq(0)
+        expect(merchants["data"][2]["attributes"]["invoice_coupon_count"]).to eq(0)
+        expect(merchants["data"][3]["attributes"]["coupons_count"]).to eq(0)
+        expect(merchants["data"][3]["attributes"]["invoice_coupon_count"]).to eq(0)
       end
 
       it "can fetch all merchants when there are no merchants" do
@@ -110,7 +129,13 @@ RSpec.describe "Merchants API" do
     end
 
     describe 'fetch a single merchant' do
-      xit 'can fetch a single merchant by id' do
+      it 'can fetch a single merchant by id' do
+        @coupon1 = Coupon.create!(name: "Coupon 1", merchant_id: @merchant1.id, status: "active", code: "COUP1", off: 5, percent_or_dollar: "percent")
+        @customer = Customer.create!(first_name: "Lisa", last_name: "Reeve")
+        @invoice1 = Invoice.create!(coupon: @coupon1, customer: @customer, merchant: @merchant1, status: "completed")
+        @invoice2 = Invoice.create!(customer: @customer, merchant: @merchant1, status: "packaged")
+        @invoice3 = Invoice.create!(coupon: @coupon1, customer: @customer, merchant: @merchant1, status: "returned")
+
         get "/api/v1/merchants/#{@merchant1.id}"
         expect(response).to be_successful
         merchant = JSON.parse(response.body)
@@ -121,6 +146,8 @@ RSpec.describe "Merchants API" do
         expect(merchant["data"]["type"]).to eq("merchant")
         expect(merchant["data"]["attributes"]).to have_key("name")
         expect(merchant["data"]["attributes"]["name"]).to eq("Wally")
+        expect(merchant["data"]["attributes"]["coupons_count"]).to eq(1)
+        expect(merchant["data"]["attributes"]["invoice_coupon_count"]).to eq(2)
       end
 
       it "returns an error when the merchant_id does not exist" do
@@ -141,7 +168,7 @@ RSpec.describe "Merchants API" do
     end
     
     describe 'include item count' do 
-      xit "includes an item count when asked" do
+      it "includes an item count when asked" do
         @item1 = Item.create(
         name: "Catnip Toy",
         description: "A soft toy filled with catnip.",
@@ -157,7 +184,6 @@ RSpec.describe "Merchants API" do
 
         get "/api/v1/merchants?count=true"
         expect(response).to be_successful
-        # binding.pry
         merchants = JSON.parse(response.body)
 
         expect(merchants["data"].count).to eq(4)
@@ -168,6 +194,8 @@ RSpec.describe "Merchants API" do
 
           individual_merchant = Merchant.find(merchant["id"].to_i)
           expect(merchant["attributes"]["item_count"]).to eq(individual_merchant.items.count)
+          expect(merchant["attributes"]["coupons_count"]).to eq(0)
+          expect(merchant["attributes"]["invoice_coupon_count"]).to eq(0)
         end
       end
 
