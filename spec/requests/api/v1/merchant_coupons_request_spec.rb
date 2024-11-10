@@ -57,16 +57,12 @@ RSpec.describe "Merchants Coupon API" do
       missing_id = @merchant3.id
       @merchant3.destroy
 
-      get "/api/v1/merchants/#{missing_id}"
-      expect(response).to_not be_successful
-      expect(response.status).to eq(404)
-  
-      data = JSON.parse(response.body, symbolize_names: true)
-  
-      expect(data[:errors]).to be_a(Array)
-  
-      expect(data[:message]).to eq("your query could not be completed") 
-      expect(data[:errors].first).to eq("Couldn't find Merchant with 'id'=#{missing_id}") 
+      get "/api/v1/merchants/#{missing_id}/coupons"
+
+      expect(response).to have_http_status(404)
+      error_response = JSON.parse(response.body, symbolize_names: true)
+      expect(error_response).to have_key(:errors)
+      expect(error_response[:errors].first[:title]).to eq("Couldn't find Merchant with 'id'=#{missing_id}")
     end
   end
 end

@@ -10,15 +10,11 @@ class Api::V1::MerchantCouponsController < ApplicationController
 
   private 
   
-  def not_found_response(exception = "Record not found")
-    render json: { message: "your request could not be completed", errors: [exception.to_s] }, status: :not_found
-  end
+  def not_found_response(exception)
+    render json: ErrorSerializer.format_error(exception, "404"), status: 404
+  end  
 
-  def invalid_record_response(exception)
-    render json: { message: "your request could not be completed", errors: exception.record.errors.full_messages }, status: :unprocessable_entity
-  end
-
-  def coupon_params
-    params.require(:merchant_id)
-  end
+  # def coupon_params
+  #   params.require(:merchant_id)
+  # end
 end
