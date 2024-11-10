@@ -34,7 +34,7 @@ class Coupon < ApplicationRecord
     end
   end
 
-  def self.findCoupons(params)
+  def self.find_coupons(params)
     merchant = Merchant.find(params[:merchant_id])
     if params[:status].present?
       Coupon.where("merchant_id = ? AND status = ?", merchant.id, params[:status])

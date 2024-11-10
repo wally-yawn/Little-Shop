@@ -3,7 +3,7 @@ class Api::V1::MerchantCouponsController < ApplicationController
   # rescue_from ActiveRecord::RecordInvalid, with: :invalid_record_response
 
   def index
-    coupons = Coupon.findCoupons(coupon_params)
+    coupons = Coupon.find_coupons(coupon_params)
     render json: CouponSerializer.new(coupons)
   end
 

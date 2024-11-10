@@ -82,21 +82,65 @@ RSpec.describe Coupon, type: :model do
     end
   end
 
-  describe 'filter on active/inactive coupons' do
-    it 'can return only active coupons' do
+  describe 'find_coupons' do
+    before :each do
+      @coupon2 = Coupon.create!(name: "Coupon 2", merchant_id: @merchant1.id, status: "active", code: "COUP2", off: 5, percent_or_dollar: "percent")
+      @coupon3 = Coupon.create!(name: "Coupon 3", merchant_id: @merchant1.id, status: "inactive", code: "COUP3", off: 5, percent_or_dollar: "percent")
+    end
 
+    it 'can return only active coupons' do
+      params = {merchant_id: @merchant1.id, status: "active"}
+      coupons = Coupon.find_coupons(params)
+      
+      expect(coupons.count).to eq(2)
+      expect(coupons[0].id).to eq(@coupon1.id)
+      expect(coupons[1].id).to eq(@coupon2.id)
     end
 
     it 'can return only inactive coupons' do
-
+      params = {merchant_id: @merchant1.id, status: "inactive"}
+      coupons = Coupon.find_coupons(params)
+      
+      expect(coupons.count).to eq(1)
+      expect(coupons[0].id).to eq(@coupon3.id)
     end
 
     it 'does not error if there are no active coupons' do
-
+      @coupon1.deactivate
+      @coupon2.deactivate
+    
+      params = {merchant_id: @merchant1.id, status: "active"}
+      coupons = Coupon.find_coupons(params)
+      
+      expect(coupons).to eq([])
     end
 
     it 'does not error if there are no inactive coupons' do
+      @coupon3.activate
+    
+      params = {merchant_id: @merchant1.id, status: "inactive"}
+      coupons = Coupon.find_coupons(params)
+      
+      expect(coupons).to eq([])
+    end
 
+    it 'errors if the merchant does not exist' do
+      missing_id = @merchant1.id
+      @merchant1.destroy
+
+      params = {merchant_id: missing_id, status: "inactive"}
+      
+      expect{ Coupon.find_coupons(params) }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+
+    it 'returns all coupons when status is not passed as a parameter' do
+      params = {merchant_id: @merchant1.id}
+      coupons = Coupon.find_coupons(params)
+      
+      expect(coupons.count).to eq(3)
+      expect(coupons[0].id).to eq(@coupon1.id)
+      expect(coupons[1].id).to eq(@coupon2.id)
+      expect(coupons[2].id).to eq(@coupon3.id)
     end
   end
 end
