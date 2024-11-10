@@ -15,9 +15,9 @@ RSpec.describe Coupon, type: :model do
     @invoice2 = Invoice.create!(customer: @customer1, merchant: @merchant1, status: "shipped")
     end
 
-  describe 'countInvoices' do
+  describe 'count_invoices' do
     it 'returns the count of invoices with this coupon' do
-      expect(@coupon1.countInvoices).to eq(1)
+      expect(@coupon1.count_invoices).to eq(1)
     end
   end
 end

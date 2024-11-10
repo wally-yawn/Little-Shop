@@ -18,11 +18,7 @@ class Api::V1::MerchantCouponsController < ApplicationController
     render json: { message: "your request could not be completed", errors: exception.record.errors.full_messages }, status: :unprocessable_entity
   end
 
-  def error_messages(messages, status)
-    {
-      message: "your request could not be completed",
-      errors: messages,
-      status: status
-    }
+  def coupon_params
+    params.require(:merchant_id)
   end
 end

@@ -26,7 +26,7 @@ RSpec.describe "Coupons API", type: :request do
       expect(attrs[:off]).to eq(@coupon1.off)
       expect(attrs[:percent_or_dollar]).to eq(@coupon1.percent_or_dollar)
       expect(attrs[:merchant_id]).to eq(@coupon1.merchant_id)
-      expect(attrs[:countInvoices]).to eq(0)
+      expect(attrs[:count_invoices]).to eq(0)
     end
 
     it 'returns the count of times used' do
@@ -40,7 +40,7 @@ RSpec.describe "Coupons API", type: :request do
       coupon = JSON.parse(response.body, symbolize_names: true)[:data]
 
       expect(coupon[:id]).to eq(@coupon1.id.to_s)
-      expect(coupon[:attributes][:countInvoices]).to eq(1)
+      expect(coupon[:attributes][:count_invoices]).to eq(1)
     end
 
     
@@ -81,7 +81,7 @@ RSpec.describe "Coupons API", type: :request do
       expect(coupon_response["data"]["attributes"]["off"]).to eq(6.6)
       expect(coupon_response["data"]["attributes"]["percent_or_dollar"]).to eq("dollar")
       expect(coupon_response["data"]["attributes"]["merchant_id"]).to eq(@merchant1.id)
-      expect(coupon_response["data"]["attributes"]["countInvoices"]).to eq(0)
+      expect(coupon_response["data"]["attributes"]["count_invoices"]).to eq(0)
     end
 
     it 'returns an error when the merchant does not exist' do
