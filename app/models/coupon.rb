@@ -16,7 +16,7 @@ class Coupon < ApplicationRecord
   end
 
   def activate
-    activeCoupons = Coupon.where("merchant_id = ?", self.merchant_id)
+    activeCoupons = Coupon.where("merchant_id = ? AND status = ?", self.merchant_id, "active")
     if activeCoupons.count < 5
       self.update!(status: "active")
     else 
@@ -26,7 +26,7 @@ class Coupon < ApplicationRecord
 
   def self.create_coupon(params)
     merchant = Merchant.find(params[:merchant_id])
-    activeCoupons = Coupon.where("merchant_id = ?", params[:merchant_id])
+    activeCoupons = Coupon.where("merchant_id = ? AND status = ?", params[:merchant_id], "active")
     if activeCoupons.count < 5
       coupon = Coupon.create!(params)
     else
