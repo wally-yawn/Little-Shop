@@ -112,10 +112,10 @@ RSpec.describe "Coupons API", type: :request do
     end
 
     it 'returns an error if there are already 5 active coupons' do
-      coupon3 = Coupon.create!(name: "Coupon 2", merchant_id: @merchant1.id, status: "active", code: "COUP2", off: 5, percent_or_dollar: "percent")
-      coupon4 = Coupon.create!(name: "Coupon 3", merchant_id: @merchant1.id, status: "active", code: "COUP3", off: 5, percent_or_dollar: "percent")
-      coupon5 = Coupon.create!(name: "Coupon 4", merchant_id: @merchant1.id, status: "active", code: "COUP4", off: 5, percent_or_dollar: "percent")
-      coupon6 = Coupon.create!(name: "Coupon 5", merchant_id: @merchant1.id, status: "active", code: "COUP5", off: 5, percent_or_dollar: "percent")
+      coupon3 = Coupon.create!(name: "Coupon 3", merchant_id: @merchant1.id, status: "active", code: "COUP3", off: 5, percent_or_dollar: "percent")
+      coupon4 = Coupon.create!(name: "Coupon 4", merchant_id: @merchant1.id, status: "active", code: "COUP4", off: 5, percent_or_dollar: "percent")
+      coupon5 = Coupon.create!(name: "Coupon 5", merchant_id: @merchant1.id, status: "active", code: "COUP5", off: 5, percent_or_dollar: "percent")
+      coupon6 = Coupon.create!(name: "Coupon 6", merchant_id: @merchant1.id, status: "active", code: "COUP6", off: 5, percent_or_dollar: "percent")
       
       coupon_params = { name: "Coupon6", merchant_id: @merchant1.id, status: "active", code: "COUP6", off: 6.6, percent_or_dollar: "dollar"}
       
@@ -220,10 +220,10 @@ RSpec.describe "Coupons API", type: :request do
     end
 
     it 'cannot activate an inactive coupon if there are already 5 active coupons' do
-      coupon3 = Coupon.create!(name: "Coupon 2", merchant_id: @merchant1.id, status: "active", code: "COUP2", off: 5, percent_or_dollar: "percent")
-      coupon4 = Coupon.create!(name: "Coupon 3", merchant_id: @merchant1.id, status: "active", code: "COUP3", off: 5, percent_or_dollar: "percent")
-      coupon5 = Coupon.create!(name: "Coupon 4", merchant_id: @merchant1.id, status: "active", code: "COUP4", off: 5, percent_or_dollar: "percent")
-      coupon6 = Coupon.create!(name: "Coupon 5", merchant_id: @merchant1.id, status: "active", code: "COUP5", off: 5, percent_or_dollar: "percent")
+      coupon3 = Coupon.create!(name: "Coupon 3", merchant_id: @merchant1.id, status: "active", code: "COUP3", off: 5, percent_or_dollar: "percent")
+      coupon4 = Coupon.create!(name: "Coupon 4", merchant_id: @merchant1.id, status: "active", code: "COUP4", off: 5, percent_or_dollar: "percent")
+      coupon5 = Coupon.create!(name: "Coupon 5", merchant_id: @merchant1.id, status: "active", code: "COUP5", off: 5, percent_or_dollar: "percent")
+      coupon6 = Coupon.create!(name: "Coupon 6", merchant_id: @merchant1.id, status: "active", code: "COUP6", off: 5, percent_or_dollar: "percent")
       
       patch "/api/v1/coupons/#{@coupon2.id}/activate"
 

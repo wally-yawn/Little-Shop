@@ -6,6 +6,10 @@ RSpec.describe Coupon, type: :model do
     it { should belong_to(:merchant)}
   end
 
+  describe "validations" do
+    it { should validate_uniqueness_of(:code)}
+  end
+
   before :each do
     @merchant1 = Merchant.create!(name: 'Wally Wallace')
     @merchant2 = Merchant.create!(name: 'Dahlia Wallace')
@@ -50,7 +54,7 @@ RSpec.describe Coupon, type: :model do
       coupon3 = Coupon.create!(name: "Coupon 3", merchant_id: @merchant1.id, status: "active", code: "COUP3", off: 5, percent_or_dollar: "percent")
       coupon4 = Coupon.create!(name: "Coupon 4", merchant_id: @merchant1.id, status: "active", code: "COUP4", off: 5, percent_or_dollar: "percent")
       coupon5 = Coupon.create!(name: "Coupon 5", merchant_id: @merchant1.id, status: "active", code: "COUP5", off: 5, percent_or_dollar: "percent")
-      coupon6 = Coupon.create!(name: "Coupon 6", merchant_id: @merchant1.id, status: "active", code: "COUP16", off: 5, percent_or_dollar: "percent")
+      coupon6 = Coupon.create!(name: "Coupon 6", merchant_id: @merchant1.id, status: "active", code: "COUP6", off: 5, percent_or_dollar: "percent")
       expect{ @coupon1.activate }.to raise_error(FiveActiveCouponsError)
       expect(@coupon1.status).to eq("inactive")
     end
@@ -58,7 +62,7 @@ RSpec.describe Coupon, type: :model do
 
   describe 'create_coupon' do
     it 'can create a coupon' do
-      params = {name: "Coupon 1", merchant_id: "#{@merchant1.id}", status: "active", code: "COUP1", off: 5, percent_or_dollar: "percent"}
+      params = {name: "Coupon 1", merchant_id: "#{@merchant1.id}", status: "active", code: "CREATECOUP", off: 5, percent_or_dollar: "percent"}
       Coupon.create_coupon(params)
     end
 
@@ -68,7 +72,7 @@ RSpec.describe Coupon, type: :model do
       coupon4 = Coupon.create!(name: "Coupon 4", merchant_id: @merchant1.id, status: "active", code: "COUP4", off: 5, percent_or_dollar: "percent")
       coupon5 = Coupon.create!(name: "Coupon 5", merchant_id: @merchant1.id, status: "active", code: "COUP5", off: 5, percent_or_dollar: "percent")
 
-      params = {name: "Coupon 1", merchant_id: "#{@merchant1.id}", status: "active", code: "COUP1", off: 5, percent_or_dollar: "percent"}
+      params = {name: "Coupon 1", merchant_id: "#{@merchant1.id}", status: "active", code: "COUPERROR", off: 5, percent_or_dollar: "percent"}
       
       expect{ Coupon.create_coupon(params) }.to raise_error(FiveActiveCouponsError)
     end

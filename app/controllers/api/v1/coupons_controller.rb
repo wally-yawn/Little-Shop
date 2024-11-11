@@ -26,7 +26,6 @@ class Api::V1::CouponsController < ApplicationController
     render json: CouponSerializer.new(coupon)
   end
 
-
   private 
   def not_found_response(exception)
     render json: ErrorSerializer.format_error(exception, "404"), status: 404
