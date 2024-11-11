@@ -151,7 +151,7 @@ RSpec.describe "Coupons API", type: :request do
     end
 
     it 'cannot deactivate an active coupon with pending invoices' do
-      @invoice1 = Invoice.create!(customer: @customer1, merchant: @merchant1, status: "pending", coupon: @coupon1)
+      @invoice1 = Invoice.create!(customer: @customer1, merchant: @merchant1, status: "packaged", coupon: @coupon1)
       patch "/api/v1/coupons/#{@coupon1.id}/deactivate"
 
       expect(response).to_not be_successful

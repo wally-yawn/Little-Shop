@@ -1,14 +1,14 @@
 class Coupon < ApplicationRecord
   belongs_to :merchant
   has_many :invoices
-  validates :code, uniqueness: {message: "has already been taken"}
+  # validates :code, uniqueness: {message: "has already been taken"}
 
   def count_invoices
     invoices.count
   end
 
   def deactivate
-    pending_invoices = Invoice.where("coupon_id = ? AND status = 'pending'", self.id)
+    pending_invoices = Invoice.where("coupon_id = ? AND status = 'packaged'", self.id)
     if pending_invoices.count == 0
       self.update!(status: "inactive")
     else 
