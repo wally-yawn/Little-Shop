@@ -133,6 +133,10 @@ RSpec.describe "Coupons API", type: :request do
       expect(error[:status]).to eq("422")
       expect(error[:title]).to eq("Merchant #{@merchant1.id} already has 5 active coupons") 
     end
+
+    xit 'returns an errorif using a duplicate coupon code' do
+      
+    end
   end
 
   describe 'deactivate' do

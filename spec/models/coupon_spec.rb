@@ -6,10 +6,6 @@ RSpec.describe Coupon, type: :model do
     it { should belong_to(:merchant)}
   end
 
-  describe "validations" do
-    xit { should validate_uniqueness_of(:code)}
-  end
-
   before :each do
     @merchant1 = Merchant.create!(name: 'Wally Wallace')
     @merchant2 = Merchant.create!(name: 'Dahlia Wallace')
@@ -83,6 +79,10 @@ RSpec.describe Coupon, type: :model do
       params = {name: "Coupon 1", merchant_id: "#{missing_id}", status: "active", code: "COUP1", off: 5, percent_or_dollar: "percent"}
       
       expect{ Coupon.create_coupon(params) }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+
+    xit 'cannot create a coupon with a duplicate coupon code' do
+      
     end
   end
 

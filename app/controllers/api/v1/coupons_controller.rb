@@ -3,6 +3,7 @@ class Api::V1::CouponsController < ApplicationController
   rescue_from ActiveRecord::RecordInvalid, with: :invalid_record_response
   rescue_from CouponDeactivationError, with: :deactivation_error_response
   rescue_from FiveActiveCouponsError, with: :five_active_coupons_error_response
+  # ActiveRecord::RecordNotUnique
 
   def show
     coupon = Coupon.find(params[:id])
