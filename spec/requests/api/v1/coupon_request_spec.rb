@@ -134,8 +134,23 @@ RSpec.describe "Coupons API", type: :request do
       expect(error[:title]).to eq("Merchant #{@merchant1.id} already has 5 active coupons") 
     end
 
-    xit 'returns an errorif using a duplicate coupon code' do
+    it 'returns an error if using a duplicate coupon code' do
+      Coupon.create!(name: "Coupon", merchant_id: @merchant1.id, status: "inactive", code: "alreadyused", off: 5, percent_or_dollar: "percent")
+      coupon_params = { name: "Coupon", merchant_id: @merchant1.id, status: "inactive", code: "alreadyused", off: 6.6, percent_or_dollar: "dollar"}
       
+      post '/api/v1/coupons', params: {coupon: coupon_params}
+
+      expect(response).to_not be_successful
+      expect(response.status).to eq(422)
+
+      data = JSON.parse(response.body, symbolize_names: true)
+
+      expect(data[:message]).to eq("your request could not be completed") 
+      expect(data[:errors]).to be_a(Array)
+  
+      error = data[:errors].first
+      expect(error[:status]).to eq("422")
+      expect(error[:title]).to eq("That code is already in use") 
     end
   end
 

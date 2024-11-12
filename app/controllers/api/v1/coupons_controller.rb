@@ -3,7 +3,7 @@ class Api::V1::CouponsController < ApplicationController
   rescue_from ActiveRecord::RecordInvalid, with: :invalid_record_response
   rescue_from CouponDeactivationError, with: :deactivation_error_response
   rescue_from FiveActiveCouponsError, with: :five_active_coupons_error_response
-  # ActiveRecord::RecordNotUnique
+  rescue_from ActiveRecord::RecordNotUnique, with: :non_unique_code_error_response
 
   def show
     coupon = Coupon.find(params[:id])
@@ -42,6 +42,11 @@ class Api::V1::CouponsController < ApplicationController
 
   def five_active_coupons_error_response(exception)
     render json: ErrorSerializer.format_error(exception, "422"), status: 422
+  end
+
+  def non_unique_code_error_response(exception)
+    custom_exception = ActiveRecord::RecordNotUnique.new("That code is already in use")
+    render json: ErrorSerializer.format_error(custom_exception, "422"), status: 422
   end
 
   def coupon_params

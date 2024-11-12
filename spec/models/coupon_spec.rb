@@ -81,8 +81,11 @@ RSpec.describe Coupon, type: :model do
       expect{ Coupon.create_coupon(params) }.to raise_error(ActiveRecord::RecordNotFound)
     end
 
-    xit 'cannot create a coupon with a duplicate coupon code' do
-      
+    it 'cannot create a coupon with a duplicate coupon code' do
+      params1 = {name: "Coupon 1", merchant_id: "#{@merchant1.id}", status: "active", code: "ALREADYUSED", off: 5, percent_or_dollar: "percent"}
+      params2 = {name: "Coupon 2", merchant_id: "#{@merchant1.id}", status: "active", code: "ALREADYUSED", off: 5, percent_or_dollar: "percent"}
+      coupon_orig = Coupon.create_coupon(params1)
+      expect{ Coupon.create_coupon(params2) }.to raise_error(ActiveRecord::RecordNotUnique)
     end
   end
 
