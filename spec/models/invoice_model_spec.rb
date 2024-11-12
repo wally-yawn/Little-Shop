@@ -45,22 +45,39 @@ RSpec.describe Invoice, type: :model do
     end
 
     describe 'calculate_discounted_total' do
-      xit 'can calculate the discounted total on an invoice with a % coupon' do
-
+      before :each do
+        @item1 = Item.create!(name: "item1", description: 'description', unit_price: 1.99, merchant_id: @merchant.id)
+        @item2 = Item.create!(name: "item2", description: 'description', unit_price: 3.99, merchant_id: @merchant.id)
+        @invoice_item1 = InvoiceItem.create!(item_id: @item1.id, invoice_id: @invoice1.id, quantity: 1, unit_price: 4.49)
+        @invoice_item2 = InvoiceItem.create!(item_id: @item1.id, invoice_id: @invoice1.id, quantity: 10, unit_price: 6.49)
+        @coupon1 = Coupon.create!(name: "Coupon 1", merchant_id: @merchant.id, status: "active", code: Faker::Games::Pokemon.unique.name, off: 10, percent_or_dollar: "percent")
+        @coupon2 = Coupon.create!(name: "Coupon 2", merchant_id: @merchant.id, status: "active", code: Faker::Games::Pokemon.unique.name, off: 10, percent_or_dollar: "dollar")
       end
 
-      xit 'can calculate the discounted total on an invoice with a $ coupon' do
-
+      it 'can calculate the discounted total on an invoice with a % coupon' do
+        @invoice1.coupon = @coupon1
+        expect(@invoice1.calculate_discounted_total).to eq(62.45)
       end
 
-      xit 'can calculate the discounted total on an invoice without a coupon' do
-        
+      it 'can calculate the discounted total on an invoice with a $ coupon' do
+        @invoice1.coupon = @coupon2
+        expect(@invoice1.calculate_discounted_total).to eq(59.39)
       end
 
-      xit 'can calculate the discounted total on an invoice with a coupon with no items' do
-        
+      it 'can calculate the discounted total on an invoice without a coupon' do
+        expect(@invoice1.calculate_total).to eq(69.39)
       end
 
+      it 'can calculate the discounted total on an invoice with a coupon with no items' do
+        @invoice2.coupon = @coupon1
+        expect(@invoice2.calculate_discounted_total).to eq(0)
+      end
+
+      it 'does not allow the total to go below 0 with a dollar coupon' do
+        @coupon2.off = 100
+        @invoice1.coupon = @coupon2
+        expect(@invoice1.calculate_discounted_total).to eq(0)
+      end
     end
 
     describe 'filter' do

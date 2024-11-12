@@ -18,12 +18,26 @@ class Invoice < ApplicationRecord
     end
   end
 
-  def calculate_total()
-    puts 'calculated total'
+  def calculate_total
+    invoice_total = 0
+    self.invoice_items.each do |invoice_item|
+      invoice_total += invoice_item.quantity * invoice_item.unit_price
+    end
+    invoice_total
   end
 
-  def calculate__discounted_total()
-    puts 'calculated total'
+  def calculate_discounted_total
+    invoice_total = calculate_total
+    if (self.coupon_id != nil && self.coupon.percent_or_dollar == "percent")
+      invoice_total = (invoice_total * (1 - (coupon.off/ 100))).round(2)
+    elsif(self.coupon_id != nil && self.coupon.percent_or_dollar == "dollar")
+      invoice_total -= coupon.off
+    end
+    if invoice_total < 0
+      0
+    else
+      invoice_total
+    end
   end
 
   private
