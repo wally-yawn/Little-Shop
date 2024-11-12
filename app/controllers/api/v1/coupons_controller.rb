@@ -32,10 +32,6 @@ class Api::V1::CouponsController < ApplicationController
     render json: ErrorSerializer.format_error(exception, "404"), status: 404
   end
 
-  # def invalid_record_response(exception)
-  #   render json: ErrorSerializer.format_error(exception, "400"), status: 400
-  # end
-
   def deactivation_error_response(exception)
     render json: ErrorSerializer.format_error(exception, "422"), status: 422
   end

@@ -94,11 +94,6 @@ RSpec.describe Merchant, type: :model do
       expect(merchant.id).to eq(@merchant3.id)
     end
 
-    # it 'does not error when there are no matching merchants' do
-    #   merchant = Merchant.find_by_params({ name: 'abdul'})
-    #   expect(merchant).to eq([])
-    # end
-
     it 'errors when a parameter is missing' do
       merchant = Merchant.find_by_params({})
       expect(merchant).to be_a(Hash)
