@@ -134,6 +134,19 @@ RSpec.describe "Coupons API", type: :request do
       expect(error[:title]).to eq("Merchant #{@merchant1.id} already has 5 active coupons") 
     end
 
+    it 'allows creating an inactive coupon if there are already 5 active coupons' do
+      coupon3 = Coupon.create!(name: "Coupon 3", merchant_id: @merchant1.id, status: "active", code: "COUP3", off: 5, percent_or_dollar: "percent")
+      coupon4 = Coupon.create!(name: "Coupon 4", merchant_id: @merchant1.id, status: "active", code: "COUP4", off: 5, percent_or_dollar: "percent")
+      coupon5 = Coupon.create!(name: "Coupon 5", merchant_id: @merchant1.id, status: "active", code: "COUP5", off: 5, percent_or_dollar: "percent")
+      coupon6 = Coupon.create!(name: "Coupon 6", merchant_id: @merchant1.id, status: "active", code: "COUP6", off: 5, percent_or_dollar: "percent")
+      
+      coupon_params = { name: "Coupon6", merchant_id: @merchant1.id, status: "inactive", code: "COUP7", off: 6.6, percent_or_dollar: "dollar"}
+      
+      post '/api/v1/coupons', params: {coupon: coupon_params}
+
+      expect(response).to be_successful
+    end
+
     it 'returns an error if using a duplicate coupon code' do
       Coupon.create!(name: "Coupon", merchant_id: @merchant1.id, status: "inactive", code: "alreadyused", off: 5, percent_or_dollar: "percent")
       coupon_params = { name: "Coupon", merchant_id: @merchant1.id, status: "inactive", code: "alreadyused", off: 6.6, percent_or_dollar: "dollar"}

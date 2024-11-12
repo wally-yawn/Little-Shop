@@ -63,7 +63,13 @@ RSpec.describe Coupon, type: :model do
   describe 'create_coupon' do
     it 'can create a coupon' do
       params = {name: "Coupon 1", merchant_id: "#{@merchant1.id}", status: "active", code: "CREATECOUP", off: 5, percent_or_dollar: "percent"}
-      Coupon.create_coupon(params)
+      coupon1 = Coupon.create_coupon(params)
+      expect(coupon1.name).to eq("Coupon 1")
+      expect(coupon1.merchant).to eq(@merchant1)
+      expect(coupon1.status).to eq("active")
+      expect(coupon1.code).to eq("CREATECOUP")
+      expect(coupon1.off).to eq(5)
+      expect(coupon1.percent_or_dollar).to eq("percent")
     end
 
     it 'cannot create a coupon if the merchant has 5 active coupons' do
@@ -75,6 +81,22 @@ RSpec.describe Coupon, type: :model do
       params = {name: "Coupon 1", merchant_id: "#{@merchant1.id}", status: "active", code: "COUPERROR", off: 5, percent_or_dollar: "percent"}
       
       expect{ Coupon.create_coupon(params) }.to raise_error(FiveActiveCouponsError)
+    end
+
+    it 'allows creating an inactive coupon if the merchant has 5 active coupons' do
+      coupon2 = Coupon.create!(name: "Coupon 2", merchant_id: @merchant1.id, status: "active", code: "COUP2", off: 5, percent_or_dollar: "percent")
+      coupon3 = Coupon.create!(name: "Coupon 3", merchant_id: @merchant1.id, status: "active", code: "COUP3", off: 5, percent_or_dollar: "percent")
+      coupon4 = Coupon.create!(name: "Coupon 4", merchant_id: @merchant1.id, status: "active", code: "COUP4", off: 5, percent_or_dollar: "percent")
+      coupon5 = Coupon.create!(name: "Coupon 5", merchant_id: @merchant1.id, status: "active", code: "COUP5", off: 5, percent_or_dollar: "percent")
+
+      params = {name: "Coupon 6", merchant_id: "#{@merchant1.id}", status: "inactive", code: "COUP6", off: 5, percent_or_dollar: "percent"}
+      coupon6 = Coupon.create_coupon(params)
+      expect(coupon6.name).to eq("Coupon 6")
+      expect(coupon6.merchant).to eq(@merchant1)
+      expect(coupon6.status).to eq("inactive")
+      expect(coupon6.code).to eq("COUP6")
+      expect(coupon6.off).to eq(5)
+      expect(coupon6.percent_or_dollar).to eq("percent")
     end
 
     it 'cannot create a coupon if the merchant does not exist' do
