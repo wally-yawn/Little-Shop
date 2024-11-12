@@ -7,8 +7,12 @@ RSpec.describe Coupon, type: :model do
   end
 
   before :each do
-    @merchant1 = Merchant.create!(name: 'Wally Wallace')
-    @merchant2 = Merchant.create!(name: 'Dahlia Wallace')
+    Merchant.destroy_all
+    Customer.destroy_all
+    Invoice.destroy_all
+    Coupon.destroy_all
+    @merchant1 = Merchant.create!(name: Faker::Name.unique.name)
+    @merchant2 = Merchant.create!(name: Faker::Name.unique.name)
     @coupon1 = Coupon.create!(name: "Coupon 1", merchant_id: @merchant1.id, status: "active", code: "COUP1", off: 5, percent_or_dollar: "percent")
     @customer1 = Customer.create!(first_name: "Wally", last_name: "Wallace")
     @invoice1 = Invoice.create!(customer: @customer1, merchant: @merchant1, status: "returned", coupon: @coupon1)
@@ -142,8 +146,7 @@ RSpec.describe Coupon, type: :model do
 
     it 'returns all coupons when status is not passed as a parameter' do
       params = {merchant_id: @merchant1.id}
-      coupons = Coupon.find_coupons(params)
-      
+      coupons = Coupon.find_coupons(params).order(:id)
       expect(coupons.count).to eq(3)
       expect(coupons[0].id).to eq(@coupon1.id)
       expect(coupons[1].id).to eq(@coupon2.id)
