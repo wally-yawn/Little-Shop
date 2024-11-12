@@ -9,6 +9,17 @@ RSpec.describe Invoice, type: :model do
     it { should belong_to(:coupon).optional}
   end
 
+  describe 'custom validation' do
+    it 'validates that the coupon and invoice merchant_id match' do
+      @merchant = Merchant.create!(name: "Merchant A")
+      @other_merchant = Merchant.create!(name: "Merchant B")
+      @customer = Customer.create!(first_name: "Lisa", last_name: "Reeve")
+      @coupon1 = Coupon.create!(name: "Coupon 1", merchant: @merchant, status: "active", code: Faker::Games::Pokemon.unique.name, off: 10, percent_or_dollar: "percent")
+      
+      expect { @invoice1 = Invoice.create!(coupon: @coupon1, customer: @customer, merchant: @other_merchant, status: "completed") }.to raise_error(CouponAndInvoiceMerchantMismatchError)
+    end
+  end
+
   describe 'class methods' do
     before(:each) do
       Invoice.destroy_all

@@ -1,0 +1,3 @@
+class CouponAndInvoiceMerchantMismatchError < StandardError
+  
+end

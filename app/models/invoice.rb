@@ -1,13 +1,14 @@
 class Invoice < ApplicationRecord
   belongs_to :merchant
   belongs_to :customer
-  belongs_to :coupon, optional: :true
+  belongs_to :coupon, optional: true
   has_many :transactions, dependent: :destroy
   has_many :invoice_items, dependent: :destroy
 
   before_validation :set_default_status
 
   validates :merchant, :customer, :status, presence: true
+  validate :coupon_merchant_matches_invoice_merchant
 
   def self.filter(params)
     merchant = Merchant.find(params[:merchant_id])
@@ -46,4 +47,10 @@ class Invoice < ApplicationRecord
     self.status ||= 'pending'
   end
   
+  def coupon_merchant_matches_invoice_merchant
+    if coupon && merchant_id != coupon.merchant_id
+      
+      raise CouponAndInvoiceMerchantMismatchError, "Coupon and Invoice merchant_id must match"
+    end
+  end
 end

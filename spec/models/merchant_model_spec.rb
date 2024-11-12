@@ -155,7 +155,6 @@ RSpec.describe Merchant, type: :model do
       @invoice1 = Invoice.create!(coupon: @coupon1, customer: @customer, merchant: @merchant1, status: "completed")
       @invoice2 = Invoice.create!(customer: @customer, merchant: @merchant1, status: "packaged")
       @invoice3 = Invoice.create!(coupon: @coupon1, customer: @customer, merchant: @merchant1, status: "returned")
-      @other_invoice = Invoice.create!(coupon: @coupon1, customer: @customer, merchant: @other_merchant, status: "completed")
       expect(@merchant1.invoice_coupon_count).to eq(2)
     end
   end
