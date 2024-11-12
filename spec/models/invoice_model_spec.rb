@@ -21,41 +21,65 @@ RSpec.describe Invoice, type: :model do
       @other_invoice = Invoice.create!(customer: @customer, merchant: @other_merchant, status: "completed")
     end
 
-    # describe '.by_merchant' do
-    #   it 'returns all invoices associated with the given merchant' do
-    #     expect(Invoice.by_merchant(@merchant.id)).to include(@invoice1, @invoice2, @invoice3)
-    #   end
+    describe 'calculate_total' do
+      before :each do
+        @item1 = Item.create!(name: Faker::Games::Pokemon.name, description: 'description', unit_price: 1.99, merchant_id: @merchant.id)
+        @item2 = Item.create!(name: Faker::Games::Pokemon.name, description: 'description', unit_price: 3.99, merchant_id: @merchant.id)
+        @invoice_item1 = InvoiceItem.create!(item_id: @item1.id, invoice_id: @invoice1.id, quantity: 1, unit_price: 4.49)
+        @invoice_item2 = InvoiceItem.create!(item_id: @item1.id, invoice_id: @invoice1.id, quantity: 10, unit_price: 6.49)
+      end
 
-    #   it 'does not return invoices from other merchants' do
-    #     other_invoice = Invoice.create!(customer: @customer, merchant: @other_merchant, status: "completed")
+      it 'can calculate the total value of an invoice' do
+        expect(@invoice1.calculate_total).to eq(69.39)
+      end
 
-    #     expect(Invoice.by_merchant(@merchant.id)).not_to include(other_invoice)
-    #   end
-    # end
+      it 'can calculate the total value when there are no invoice items' do
+        expect(@invoice2.calculate_total).to eq(0)
+      end
 
-    # describe '.by_customer' do
-    #   it 'returns all invoices associated with the given customer' do
-    #     expect(Invoice.by_customer(@customer.id)).to include(@invoice1, @invoice2, @invoice3)
-    #   end
-    # end
+      it 'can calculate the total value of an invoice and ignore coupons' do
+        @coupon1 = Coupon.create!(name: "Coupon 1", merchant_id: @merchant.id, status: "active", code: "COUP1", off: 5, percent_or_dollar: "percent")
+        @invoice1.coupon = @coupon1
+        expect(@invoice1.calculate_total).to eq(69.39)
+      end
+    end
 
-    # describe 'filter' do
-    #   it 'returns filtered based on merchant' do
-    #     invoices = Invoice.filter({merchant_id: @merchant.id})
-    #     expect(invoices).to eq([@invoice1, @invoice2, @invoice3])
-    #   end
+    describe 'calculate_discounted_total' do
+      xit 'can calculate the discounted total on an invoice with a % coupon' do
 
-    #   it 'returns filtered based on merchant and status' do
-    #     invoices = Invoice.filter({merchant_id: @merchant.id, status: "completed"})
-    #     expect(invoices).to eq([@invoice1, @invoice3])
-    #   end
+      end
 
-    #   it 'returns an empty array when no invoices exist' do
-    #     other_merchant2 = Merchant.create!(name: "Merchant C")
-    #     invoices = Invoice.filter({merchant_id: other_merchant2.id})
-    #     expect(invoices).to eq([])
-    #   end
-    # end
+      xit 'can calculate the discounted total on an invoice with a $ coupon' do
+
+      end
+
+      xit 'can calculate the discounted total on an invoice without a coupon' do
+        
+      end
+
+      xit 'can calculate the discounted total on an invoice with a coupon with no items' do
+        
+      end
+
+    end
+
+    describe 'filter' do
+      it 'returns filtered based on merchant' do
+        invoices = Invoice.filter({merchant_id: @merchant.id})
+        expect(invoices).to eq([@invoice1, @invoice2, @invoice3])
+      end
+
+      it 'returns filtered based on merchant and status' do
+        invoices = Invoice.filter({merchant_id: @merchant.id, status: "completed"})
+        expect(invoices).to eq([@invoice1, @invoice3])
+      end
+
+      it 'returns an empty array when no invoices exist' do
+        other_merchant2 = Merchant.create!(name: "Merchant C")
+        invoices = Invoice.filter({merchant_id: other_merchant2.id})
+        expect(invoices).to eq([])
+      end
+    end
     
     describe 'optional coupon parameter' do
       it 'can add an optional coupon_id' do

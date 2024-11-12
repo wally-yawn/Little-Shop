@@ -18,13 +18,13 @@ class Invoice < ApplicationRecord
     end
   end
 
-  # def self.by_merchant(merchant_id)
-  #   where(merchant_id: merchant_id)
-  # end
+  def calculate_total()
+    puts 'calculated total'
+  end
 
-  # def self.by_customer(customer_id)
-  #   where(customer_id: customer_id)
-  # end
+  def calculate__discounted_total()
+    puts 'calculated total'
+  end
 
   private
 
